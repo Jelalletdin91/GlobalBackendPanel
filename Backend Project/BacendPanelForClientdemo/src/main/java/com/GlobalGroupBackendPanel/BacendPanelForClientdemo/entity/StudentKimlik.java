@@ -6,50 +6,62 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 @Entity
-@Table(name="clients")
-public class Kimlik {
+@Table(name="student_clients")
+public class StudentKimlik {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id",
-    nullable = false)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name="first_name", nullable = false)
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name="last_name", nullable = false)
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name="email", nullable = false)
+    @Column(name = "email")
     private String email;
 
-    @Column(name="phone_number", nullable = false)
+    @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name="kimlik_number", nullable = false)
+    @Column(name = "kimlik_number")
     private String kimlikNumber;
 
-    @Column(name="kimlik_start_date", nullable = false)
+    @Column(name = "kimlik_start_date")
     private LocalDate kimlikStartDate;
 
-    @Column(name="kimlik_end_date", nullable = false)
+    @Column(name = "kimlik_end_date")
     private LocalDate kimlikEndDate;
 
-    @Column(name="notified_60_days")
+    @Column(name = "university")
+    private String university;
+
+    @Column(name = "department")
+    private String department;
+
+    @Column(name = "study_year_begin")
+    private LocalDate universityStartDate;
+
+    @Column(name = "study_year_end")
+    private LocalDate universityEndDate;
+
+    @Column(name = "notified_60_days")
     private boolean notified60Days;
 
     @Transient
-    public long getDaysLeft() {
-        if (kimlikEndDate == null) {
+    public long getDaysLeft(){
+        if (getKimlikEndDate() == null){
             return 0;
         }
         return ChronoUnit.DAYS.between(LocalDate.now(), kimlikEndDate);
     }
 
-    public Kimlik(){}
+    public StudentKimlik (){}
 
-    public Kimlik(String firstName, String lastName, String email, String phoneNumber, String kimlikNumber, LocalDate kimlikStartDate,  LocalDate kimlikEndDay, boolean notified60Days) {
+    public StudentKimlik(String firstName, String lastName, String email, String phoneNumber, String kimlikNumber, LocalDate kimlikStartDate,  LocalDate kimlikEndDay, boolean notified60Days, String university,
+                         String department, LocalDate universityStartDate, LocalDate universityEndDate) {
         this.firstName = firstName;
         this.lastName=lastName;
         this.email=email;
@@ -58,6 +70,10 @@ public class Kimlik {
         this.kimlikStartDate=kimlikStartDate;
         this.kimlikEndDate=kimlikEndDay;
         this.notified60Days=notified60Days;
+        this.university=university;
+        this.department=department;
+        this.universityStartDate=universityStartDate;
+        this.universityEndDate=universityEndDate;
 
     }
 
@@ -133,29 +149,56 @@ public class Kimlik {
         this.notified60Days = notified60days;
     }
 
+    
 
-
-
-    public boolean isNotified60Days() {
-        return notified60Days;
+    public String getUniversity() {
+        return university;
     }
 
-    public void setNotified60Days(boolean notified60Days) {
-        this.notified60Days = notified60Days;
+    public void setUniversity(String university) {
+        this.university = university;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public LocalDate getUniversityStartDate() {
+        return universityStartDate;
+    }
+
+    public void setUniversityStartDate(LocalDate universityStartDate) {
+        this.universityStartDate = universityStartDate;
+    }
+
+    public LocalDate getUniversityEndDate() {
+        return universityEndDate;
+    }
+
+    public void setUniversityEndDate(LocalDate universityEndDate) {
+        this.universityEndDate = universityEndDate;
     }
 
     @Override
     public String toString() {
-        return "Kimlik{" +
+        return "StudentKimlik{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", phoneNumber=" + phoneNumber +
-                ", kimlikNumber=" + kimlikNumber +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", kimlikNumber='" + kimlikNumber + '\'' +
                 ", kimlikStartDate=" + kimlikStartDate +
-                ", kimlikEndDay=" + kimlikEndDate +
-                ", notifie60days=" + notified60Days +
+                ", kimlikEndDate=" + kimlikEndDate +
+                ", university='" + university + '\'' +
+                ", department='" + department + '\'' +
+                ", universityStartDate=" + universityStartDate +
+                ", universityEndDate=" + universityEndDate +
+                ", notified60Days=" + notified60Days +
                 '}';
     }
 }

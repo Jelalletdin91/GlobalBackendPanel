@@ -25,19 +25,8 @@ public class KimlikServiceImpl implements KimlikerService{
     public List<Kimlik> findAll() {
 
 
+        return kimlikRepository.findAllByOrderByKimlikEndDateAsc();
 
-        List<Kimlik> kimliks = kimlikRepository.findAllByOrderByKimlikEndDateAsc();
-
-        LocalDate today = LocalDate.now();
-
-        for (Kimlik kimlik : kimliks){
-            if (kimlik.getKimlikEndDate() != null){
-                long daysLeft = ChronoUnit.DAYS.between(today, kimlik.getKimlikEndDate());
-                kimlik.setDaysLeft(daysLeft);
-            }
-        }
-
-        return kimliks;
     }
 
     @Override
@@ -61,15 +50,10 @@ public class KimlikServiceImpl implements KimlikerService{
     @Override
     public Kimlik save(Kimlik kimlik) {
 
-        LocalDate endDate = kimlik.getKimlikEndDate();
-        LocalDate today = LocalDate.now();
-
-        long daysLeft = ChronoUnit.DAYS.between(today, endDate);
-
-        if (daysLeft<=60){
-            kimlik.setNotified60days(true);
-        }else {
-            kimlik.setNotified60days(false);
+        if (kimlik.getKimlikEndDate() != null && kimlik.getDaysLeft() <= 60) {
+            kimlik.setNotified60Days(true);
+        } else {
+            kimlik.setNotified60Days(false);
         }
 
         return kimlikRepository.save(kimlik);
