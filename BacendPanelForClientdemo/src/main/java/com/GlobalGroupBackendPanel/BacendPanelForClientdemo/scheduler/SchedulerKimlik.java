@@ -5,7 +5,6 @@ import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.KimlikRep
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service.EmailService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -17,26 +16,35 @@ public class SchedulerKimlik {
 
     public SchedulerKimlik(KimlikRepository kimlikRepository, EmailService emailService) {
         this.kimlikRepository = kimlikRepository;
-        this.emailService=emailService;
+        this.emailService = emailService;
     }
 
+    // ✅ раз в день (например в 09:00)
+    @Scheduled(cron = "0 0 9 * * *")
+    public void scheduleEveryDay() {
 
-    @Scheduled(fixedDelay = 60000)
-    public void scheduleEveryDay(){
+        List<Kimlik> kimliks = kimlikRepository.findByNotified60DaysFalse();
 
-        List<Kimlik> kimliks = kimlikRepository.findAllByOrderByKimlikEndDateAsc();
+        for (Kimlik kimlik : kimliks) {
 
-        for (Kimlik kimlik: kimliks){
-            if (kimlik.getDaysLeft() == 60){
-                String text = "Kimlik " + kimlik.getDaysLeft() +  " gunden bitiyor:\n\n" + kimlik.getFirstName() + "\n" +
-                        kimlik.getLastName() + "\n" + kimlik.getPhoneNumber() + "\n"+
-                        kimlik.getEmail() + "\n" + kimlik.getKimlikNumber();
+            long daysLeft = kimlik.getDaysLeft(); // у тебя уже @Transient getDaysLeft()
+
+            if (daysLeft == 60) {
+
+                String text =
+                        "Kimlik 60 günden bitiyor:\n\n" +
+                                "Ad: " + kimlik.getFirstName() + "\n" +
+                                "Soyad: " + kimlik.getLastName() + "\n" +
+                                "Telefon: " + kimlik.getPhoneNumber() + "\n" +
+                                "Email: " + kimlik.getEmail() + "\n" +
+                                "Kimlik No: " + kimlik.getKimlikNumber();
 
                 emailService.sendCompanyAlert(text);
 
+                // ✅ помечаем что уже отправили
+                kimlik.setNotified60Days(true);
+                kimlikRepository.save(kimlik);
             }
         }
-
     }
-
 }
