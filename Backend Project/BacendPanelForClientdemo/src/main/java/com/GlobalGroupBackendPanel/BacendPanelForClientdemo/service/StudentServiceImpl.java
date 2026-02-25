@@ -21,7 +21,7 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public List<StudentKimlik> findAll() {
-        return studentRepository.findAllByOrderByStudentKimlikEndDateAsc();
+        return studentRepository.findAllByOrderByKimlikEndDateAsc();
     }
 
     @Override

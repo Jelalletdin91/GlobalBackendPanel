@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Kimlik Directory</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .border-danger-left {
+            border-left: 5px solid #dc3545;
+        }
+        .border-warning-left {
+            border-left: 5px solid #ffc107;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container mt-4">
+
+    <h3>Student Kimlik Directory</h3>
+    <hr>
+
+    <a th:href="@{/Student_kimlik/showForm}" class="btn btn-primary btn-sm mb-3">
+        Add Student
+    </a>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+
+            <th>Kimlik No</th>
+            <th>Kimlik Start</th>
+            <th>Kimlik End</th>
+            <th>Days Left</th>
+
+            <th>University</th>
+            <th>Department</th>
+            <th>Study Begin</th>
+            <th>Study End</th>
+
+            <th>Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="s : ${studentKimliks}">
+            <td th:text="${s.firstName}"></td>
+            <td th:text="${s.lastName}"></td>
+            <td th:text="${s.phoneNumber}"></td>
+            <td th:text="${s.email}"></td>
+
+            <td th:text="${s.kimlikNumber}"></td>
+            <td th:text="${s.kimlikStartDate}"></td>
+            <td th:text="${s.kimlikEndDate}"></td>
+            <td th:text="${s.daysLeft}"></td>
+
+            <td th:text="${s.university}"></td>
+            <td th:text="${s.department}"></td>
+            <td th:text="${s.universityStartDate}"></td>
+            <td th:text="${s.universityEndDate}"></td>
+
+            <td>
+                <a th:href="@{/Student_kimlik/showStudentKimlikForUpdate(studentKimlikId=${s.id})}"
+                   class="btn btn-info btn-sm">
+                    Update
+                </a>
+
+                <a th:href="@{/Student_kimlik/delete(studentKimlikId=${s.id})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Are you sure you want to delete this student?')">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        </tbody>
+
+    </table>
+
+</div>
+
+</body>
+</html>
