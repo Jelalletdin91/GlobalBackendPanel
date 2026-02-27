@@ -8,83 +8,182 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        .border-danger-left {
-            border-left: 5px solid #dc3545;
+        .border-danger-left { border-left: 5px solid #dc3545; }
+        .border-warning-left { border-left: 5px solid #ffc107; }
+        .border-success-left { border-left: 5px solid #198754; }
+
+        /* чтобы длинный текст не ломал верстку */
+        .truncate {
+          max-width: 180px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
-        .border-warning-left {
-            border-left: 5px solid #ffc107;
-        }
+
+        .actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+        .muted-label { font-size: .85rem; color: #6c757d; }
+
+        .table td, .table th { vertical-align: middle; }
     </style>
 </head>
 
 <body>
-
 <div class="container mt-4">
 
-    <h3>Student Kimlik Directory</h3>
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <h3 class="mb-0">Student Kimlik Directory</h3>
+
+        <a th:href="@{/Student_kimlik/showForm}" class="btn btn-primary btn-sm">
+            Add Student
+        </a>
+    </div>
+
     <hr>
 
-    <a th:href="@{/Student_kimlik/showForm}" class="btn btn-primary btn-sm mb-3">
-        Add Student
-    </a>
+    <!-- ✅ MOBILE VIEW (Cards) -->
+    <div class="d-block d-lg-none">
+        <div th:each="s : ${studentKimliks}"
+             class="card shadow-sm mb-3"
+             th:classappend="${s.daysLeft} &lt; 0 ? 'border-danger-left'
+                         : (${s.daysLeft} &lt;= 60 ? 'border-warning-left' : 'border-success-left')">
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-        <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Phone</th>
-            <th>Email</th>
+            <div class="card-body">
 
-            <th>Kimlik No</th>
-            <th>Kimlik Start</th>
-            <th>Kimlik End</th>
-            <th>Days Left</th>
+                <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1" th:text="${s.firstName + ' ' + s.lastName}">Student Name</h5>
 
-            <th>University</th>
-            <th>Department</th>
-            <th>Study Begin</th>
-            <th>Study End</th>
+                        <div class="muted-label">Phone: <span th:text="${s.phoneNumber}"></span></div>
+                        <div class="muted-label truncate" th:title="${s.email}">
+                            Email: <span th:text="${s.email}"></span>
+                        </div>
+                    </div>
 
-            <th>Actions</th>
-        </tr>
-        </thead>
+                    <span class="badge text-bg-dark fs-6"
+                          th:text="${s.daysLeft + ' days'}">60 days</span>
+                </div>
 
-        <tbody>
-        <tr th:each="s : ${studentKimliks}">
-            <td th:text="${s.firstName}"></td>
-            <td th:text="${s.lastName}"></td>
-            <td th:text="${s.phoneNumber}"></td>
-            <td th:text="${s.email}"></td>
+                <hr class="my-2">
 
-            <td th:text="${s.kimlikNumber}"></td>
-            <td th:text="${s.kimlikStartDate}"></td>
-            <td th:text="${s.kimlikEndDate}"></td>
-            <td th:text="${s.daysLeft}"></td>
+                <div class="row g-2">
+                    <div class="col-12">
+                        <div class="muted-label">Kimlik No</div>
+                        <div th:text="${s.kimlikNumber}"></div>
+                    </div>
 
-            <td th:text="${s.university}"></td>
-            <td th:text="${s.department}"></td>
-            <td th:text="${s.universityStartDate}"></td>
-            <td th:text="${s.universityEndDate}"></td>
+                    <div class="col-6">
+                        <div class="muted-label">Kimlik Start</div>
+                        <div th:text="${s.kimlikStartDate}"></div>
+                    </div>
+                    <div class="col-6">
+                        <div class="muted-label">Kimlik End</div>
+                        <div th:text="${s.kimlikEndDate}"></div>
+                    </div>
+                </div>
 
-            <td>
-                <a th:href="@{/Student_kimlik/showStudentKimlikForUpdate(studentKimlikId=${s.id})}"
-                   class="btn btn-info btn-sm">
-                    Update
-                </a>
+                <hr class="my-2">
 
-                <a th:href="@{/Student_kimlik/delete(studentKimlikId=${s.id})}"
-                   class="btn btn-danger btn-sm"
-                   onclick="return confirm('Are you sure you want to delete this student?')">
-                    Delete
-                </a>
-            </td>
-        </tr>
-        </tbody>
+                <div class="row g-2">
+                    <div class="col-12">
+                        <div class="muted-label">University</div>
+                        <div class="truncate" th:title="${s.university}" th:text="${s.university}"></div>
+                    </div>
 
-    </table>
+                    <div class="col-12">
+                        <div class="muted-label">Department</div>
+                        <div class="truncate" th:title="${s.department}" th:text="${s.department}"></div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="muted-label">Study Begin</div>
+                        <div th:text="${s.universityStartDate}"></div>
+                    </div>
+                    <div class="col-6">
+                        <div class="muted-label">Study End</div>
+                        <div th:text="${s.universityEndDate}"></div>
+                    </div>
+                </div>
+
+                <hr class="my-2">
+
+                <div class="actions">
+                    <a th:href="@{/Student_kimlik/showStudentKimlikForUpdate(studentKimlikId=${s.id})}"
+                       class="btn btn-info btn-sm">Update</a>
+
+                    <a th:href="@{/Student_kimlik/delete(studentKimlikId=${s.id})}"
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Are you sure you want to delete this student?')">Delete</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ DESKTOP VIEW (Table) -->
+    <div class="d-none d-lg-block">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-sm align-middle">
+                <thead class="table-dark">
+                <tr class="text-nowrap">
+                    <th>First</th>
+                    <th>Last</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+
+                    <th>Kimlik No</th>
+                    <th>Kimlik Start</th>
+                    <th>Kimlik End</th>
+                    <th>Days Left</th>
+
+                    <th>University</th>
+                    <th>Department</th>
+                    <th>Study Begin</th>
+                    <th>Study End</th>
+
+                    <th>Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="s : ${studentKimliks}"
+                    class="text-nowrap"
+                    th:classappend="${s.daysLeft} &lt; 0 ? 'border-danger-left'
+                            : (${s.daysLeft} &lt;= 60 ? 'border-warning-left' : '')">
+
+                    <td th:text="${s.firstName}"></td>
+                    <td th:text="${s.lastName}"></td>
+                    <td th:text="${s.phoneNumber}"></td>
+
+                    <td class="truncate" th:title="${s.email}" th:text="${s.email}"></td>
+
+                    <td th:text="${s.kimlikNumber}"></td>
+                    <td th:text="${s.kimlikStartDate}"></td>
+                    <td th:text="${s.kimlikEndDate}"></td>
+                    <td th:text="${s.daysLeft}"></td>
+
+                    <td class="truncate" th:title="${s.university}" th:text="${s.university}"></td>
+                    <td class="truncate" th:title="${s.department}" th:text="${s.department}"></td>
+
+                    <td th:text="${s.universityStartDate}"></td>
+                    <td th:text="${s.universityEndDate}"></td>
+
+                    <td>
+                        <div class="actions">
+                            <a th:href="@{/Student_kimlik/showStudentKimlikForUpdate(studentKimlikId=${s.id})}"
+                               class="btn btn-info btn-sm">Update</a>
+
+                            <a th:href="@{/Student_kimlik/delete(studentKimlikId=${s.id})}"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Are you sure you want to delete this student?')">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
 
 </div>
-
 </body>
 </html>

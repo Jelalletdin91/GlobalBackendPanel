@@ -8,71 +8,116 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
-    .border-danger-left {
-      border-left: 5px solid #dc3545;
-    }
-
-    .border-warning-left {
-      border-left: 5px solid #ffc107;
-    }
+    .border-danger-left { border-left: 5px solid #dc3545; }
+    .border-warning-left { border-left: 5px solid #ffc107; }
+    .border-success-left { border-left: 5px solid #198754; }
+    .actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .muted-label { font-size: .85rem; color: #6c757d; }
   </style>
-
 </head>
 
 <body>
-
 <div class="container mt-4">
 
-  <h3>Client Identity Directory</h3>
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <h3 class="mb-0">Client Identity Directory</h3>
+    <a th:href="@{/kimlik/showForm}" class="btn btn-primary btn-sm">Add Client</a>
+  </div>
+
   <hr>
 
-  <a th:href="@{/kimlik/showForm}" class="btn btn-primary btn-sm mb-3">
-    Add Client
-  </a>
+  <!-- ✅ MOBILE VIEW (Cards) -->
+  <div class="d-block d-lg-none">
+    <div th:each="k : ${kimliks}"
+         class="card shadow-sm mb-3"
+         th:classappend="${k.daysLeft} &lt; 0 ? 'border-danger-left'
+                         : (${k.daysLeft} &lt;= 60 ? 'border-warning-left' : 'border-success-left')">
 
-  <table class="table table-bordered table-striped">
-    <thead class="table-dark">
-    <tr>
-      <th>First Name</th>
-      <th>Last Name</th>
-      <th>Phone Number</th>
-      <th>T.C. Number</th>
-      <th>T.C. Start Date</th>
-      <th>T.C. Expiry Date</th>
-      <th>Days Left</th>
-      <th>Actions</th>
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h5 class="mb-1" th:text="${k.firstName + ' ' + k.lastName}">Name</h5>
+            <div class="muted-label">Phone: <span th:text="${k.phoneNumber}"></span></div>
+            <div class="muted-label">TC No: <span th:text="${k.kimlikNumber}"></span></div>
+          </div>
 
-    </tr>
-    </thead>
+          <span class="badge text-bg-dark fs-6"
+                th:text="${k.daysLeft + ' days'}">
+            60 days
+          </span>
+        </div>
 
-    <tbody>
-    <tr th:each="k : ${kimliks}">
-      <td th:text="${k.firstName}"></td>
-      <td th:text="${k.lastName}"></td>
-      <td th:text="${k.phoneNumber}"></td>
-      <td th:text="${k.kimlikNumber}"></td>
-      <td th:text="${k.kimlikStartDate}"></td>
-      <td th:text="${k.kimlikEndDate}"></td>
-      <td th:text="${k.daysLeft}"></td>
+        <hr class="my-2">
 
-      <td>
-        <a th:href="@{/kimlik/showFormForUpdate(kimlikId=${k.id})}"
-           class="btn btn-info btn-sm">
-          Update
-        </a>
+        <div class="row g-2">
+          <div class="col-6">
+            <div class="muted-label">Start</div>
+            <div th:text="${k.kimlikStartDate}"></div>
+          </div>
+          <div class="col-6">
+            <div class="muted-label">End</div>
+            <div th:text="${k.kimlikEndDate}"></div>
+          </div>
+        </div>
 
-        <a th:href="@{/kimlik/delete(kimlikId=${k.id})}"
-           class="btn btn-danger btn-sm"
-           onclick="return confirm('Are you sure you want to delete this client?')">
-          Delete
-        </a>
-      </td>
-    </tr>
-    </tbody>
+        <hr class="my-2">
 
-  </table>
+        <div class="actions">
+          <a th:href="@{/kimlik/showFormForUpdate(kimlikId=${k.id})}"
+             class="btn btn-info btn-sm">Update</a>
+
+          <a th:href="@{/kimlik/delete(kimlikId=${k.id})}"
+             class="btn btn-danger btn-sm"
+             onclick="return confirm('Are you sure you want to delete this client?')">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ DESKTOP VIEW (Table) -->
+  <div class="d-none d-lg-block">
+    <table class="table table-bordered table-striped table-hover align-middle">
+      <thead class="table-dark">
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Phone Number</th>
+        <th>T.C. Number</th>
+        <th>T.C. Start Date</th>
+        <th>T.C. Expiry Date</th>
+        <th>Days Left</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr th:each="k : ${kimliks}"
+          th:classappend="${k.daysLeft} &lt; 0 ? 'border-danger-left'
+                          : (${k.daysLeft} &lt;= 60 ? 'border-warning-left' : '')">
+        <td th:text="${k.firstName}"></td>
+        <td th:text="${k.lastName}"></td>
+        <td th:text="${k.phoneNumber}"></td>
+        <td th:text="${k.kimlikNumber}"></td>
+        <td th:text="${k.kimlikStartDate}"></td>
+        <td th:text="${k.kimlikEndDate}"></td>
+        <td th:text="${k.daysLeft}"></td>
+
+        <td>
+          <div class="actions">
+            <a th:href="@{/kimlik/showFormForUpdate(kimlikId=${k.id})}"
+               class="btn btn-info btn-sm">Update</a>
+
+            <a th:href="@{/kimlik/delete(kimlikId=${k.id})}"
+               class="btn btn-danger btn-sm"
+               onclick="return confirm('Are you sure you want to delete this client?')">Delete</a>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+
+    </table>
+  </div>
 
 </div>
-
 </body>
 </html>

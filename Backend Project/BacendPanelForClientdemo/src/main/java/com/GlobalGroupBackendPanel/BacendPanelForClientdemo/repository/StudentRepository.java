@@ -8,5 +8,7 @@ import java.util.List;
 
 public interface StudentRepository extends JpaRepository<StudentKimlik, Long> {
     List<StudentKimlik> findAllByOrderByKimlikEndDateAsc();
+
+    List<StudentKimlik> findByNotified60daysFalse();
 }
 
