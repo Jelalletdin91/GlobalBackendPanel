@@ -24,55 +24,60 @@ public class SchedulerKimlik {
     }
 
     // ✅ раз в день (например в 09:00)
-    @Scheduled(cron = "0 0 9 * * *")
-    public void scheduleEveryDayForStudentKimlik() {
+    @Scheduled(cron = "0 0 9 * * *") // для теста
+    public void scheduleStudents() {
 
-        List<StudentKimlik> studentKimliks = studentRepository.findByNotified60daysFalse();
+        List<StudentKimlik> studentKimliks = studentRepository.findByNotified60DaysFalse();
 
-        for (StudentKimlik studentKimlik : studentKimliks) {
+        for (StudentKimlik s : studentKimliks) {
+            long daysLeft = s.getDaysLeft();
 
-            long daysLeft = studentKimlik.getDaysLeft(); // у тебя уже @Transient getDaysLeft()
-
-            if (daysLeft <= 60 && daysLeft >= 0 && !studentKimlik.isNotified60days()) {
+            if (daysLeft <= 60 && daysLeft >= 0 && !s.isNotified60days()) {
 
                 String text =
-                        "Kimlik 60 günden bitiyor:\n\n" +
-                                "Ad: " + studentKimlik.getFirstName() + "\n" +
-                                "Soyad: " + studentKimlik.getLastName() + "\n" +
-                                "Telefon: " + studentKimlik.getPhoneNumber() + "\n" +
-                                "Email: " + studentKimlik.getEmail() + "\n" +
-                                "Kimlik No: " + studentKimlik.getKimlikNumber();
+                        "Student Kimlik 60 günden bitiyor:\n\n" +
+                                "Ad: " + s.getFirstName() + "\n" +
+                                "Soyad: " + s.getLastName() + "\n" +
+                                "Telefon: " + s.getPhoneNumber() + "\n" +
+                                "Email: " + s.getEmail() + "\n" +
+                                "Kimlik No: " + s.getKimlikNumber() + "\n" +
+                                "Üniversite: " + s.getUniversity() + "\n" +
+                                "Bölüm: " + s.getDepartment() + "\n" +
+                                "Bitiş: " + s.getKimlikEndDate() + "\n" +
+                                "Kalan gün: " + daysLeft;
 
                 emailService.sendCompanyAlert(text);
 
-                // ✅ помечаем что уже отправили
-                studentKimlik.setNotified60days(true);
-                studentRepository.save(studentKimlik);
+                s.setNotified60days(true);
+                studentRepository.save(s);
             }
         }
     }
 
-    @Scheduled(cron = "0 5 9 * * *")
-    public void scheduleEveryDay() {
+    // CLIENTS (Kimlik)
+    @Scheduled(cron = "0 5 9 * * *") // для теста, потом поменяем на раз в день
+    public void scheduleClients() {
 
         List<Kimlik> kimliks = kimlikRepository.findByNotified60DaysFalse();
 
         for (Kimlik kimlik : kimliks) {
+            long daysLeft = kimlik.getDaysLeft();
 
-            long daysLeft = kimlik.getDaysLeft(); // у тебя уже @Transient getDaysLeft()
+            // ✅ отправляем ОДИН раз, когда 0..60 дней
+            if (daysLeft <= 60 && daysLeft >= 0 && !kimlik.isNotified60Days()) {
 
-            if (daysLeft <= 60 && daysLeft >= 0 && !kimlik.isNotified60Days()){
                 String text =
                         "Kimlik 60 günden bitiyor:\n\n" +
                                 "Ad: " + kimlik.getFirstName() + "\n" +
                                 "Soyad: " + kimlik.getLastName() + "\n" +
                                 "Telefon: " + kimlik.getPhoneNumber() + "\n" +
                                 "Email: " + kimlik.getEmail() + "\n" +
-                                "Kimlik No: " + kimlik.getKimlikNumber();
+                                "Kimlik No: " + kimlik.getKimlikNumber() + "\n" +
+                                "Bitiş: " + kimlik.getKimlikEndDate() + "\n" +
+                                "Kalan gün: " + daysLeft;
 
                 emailService.sendCompanyAlert(text);
 
-                // ✅ помечаем что уже отправили
                 kimlik.setNotified60Days(true);
                 kimlikRepository.save(kimlik);
             }

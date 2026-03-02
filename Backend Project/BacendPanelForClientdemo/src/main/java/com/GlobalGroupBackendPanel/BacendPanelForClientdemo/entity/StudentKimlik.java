@@ -149,7 +149,7 @@ public class StudentKimlik {
         this.notified60Days = notified60days;
     }
 
-    
+
 
     public String getUniversity() {
         return university;

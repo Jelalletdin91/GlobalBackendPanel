@@ -34,6 +34,7 @@ public class StudentKimlikController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute("studentKimlik") StudentKimlik studentKimlik) {
+        studentKimlik.setNotified60days(false);
         studentService.save(studentKimlik);
         return "redirect:/Student_kimlik/list";
     }

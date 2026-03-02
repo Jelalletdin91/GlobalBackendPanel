@@ -64,4 +64,6 @@ public class KimlikController {
 
         return "redirect:/kimlik/list";
     }
+
+
 }

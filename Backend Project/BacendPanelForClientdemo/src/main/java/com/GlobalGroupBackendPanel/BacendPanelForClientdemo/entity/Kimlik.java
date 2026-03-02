@@ -125,17 +125,6 @@ public class Kimlik {
         this.kimlikEndDate = kimlikEndDay;
     }
 
-    public boolean isNotified60days() {
-        return notified60Days;
-    }
-
-    public void setNotified60days(boolean notified60days) {
-        this.notified60Days = notified60days;
-    }
-
-
-
-
     public boolean isNotified60Days() {
         return notified60Days;
     }
