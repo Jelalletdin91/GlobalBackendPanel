@@ -36,7 +36,7 @@ public class Kimlik {
     @Column(name="kimlik_end_date", nullable = false)
     private LocalDate kimlikEndDate;
 
-    @Column(name="notified_60_days")
+    @Column(name="notified_60_days", nullable = false)
     private boolean notified60Days;
 
     @Transient

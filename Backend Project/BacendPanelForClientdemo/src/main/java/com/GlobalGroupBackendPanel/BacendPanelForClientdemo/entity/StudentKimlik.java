@@ -47,7 +47,7 @@ public class StudentKimlik {
     @Column(name = "study_year_end")
     private LocalDate universityEndDate;
 
-    @Column(name = "notified_60_days")
+    @Column(name = "notified_60_days", nullable = false)
     private boolean notified60Days;
 
     @Transient
