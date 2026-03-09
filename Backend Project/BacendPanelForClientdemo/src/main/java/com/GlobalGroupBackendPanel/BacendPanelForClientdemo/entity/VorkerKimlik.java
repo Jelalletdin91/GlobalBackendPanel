@@ -43,7 +43,7 @@ public class VorkerKimlik {
     private boolean notified60Days;
 
     @Transient
-    public long getDays(){
+    public long getDaysLeft(){
         if (kimlikEndDate==null){
             return 0;
         }else {

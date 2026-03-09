@@ -9,9 +9,11 @@ import java.util.List;
 
 public interface VorkerRepository extends JpaRepository<VorkerKimlik, Long> {
 
-    List<VorkerKimlik> findAllByOrderByKimlikEndDateAsc();
+
 
     List<VorkerKimlik> findByNotified60DaysFalse();
 
     List<VorkerKimlik> findByNotified60DaysFalseAndKimlikEndDateLessThanEqual(LocalDate date);
+
+    List<VorkerKimlik> findAllByOrderByKimlikEndDateAsc();
 }

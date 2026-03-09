@@ -44,11 +44,10 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public StudentKimlik save(StudentKimlik studentKimlik) {
 
-        if (studentKimlik.getKimlikEndDate() != null && studentKimlik.getDaysLeft() <= 60){
-            studentKimlik.setNotified60days(true);
-        }else {
+        if(studentKimlik.getId() == null){
             studentKimlik.setNotified60days(false);
         }
+
 
         return studentRepository.save(studentKimlik);
     }

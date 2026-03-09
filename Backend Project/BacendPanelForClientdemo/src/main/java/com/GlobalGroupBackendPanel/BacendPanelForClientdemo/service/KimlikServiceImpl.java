@@ -50,11 +50,10 @@ public class KimlikServiceImpl implements KimlikerService{
     @Override
     public Kimlik save(Kimlik kimlik) {
 
-        if (kimlik.getKimlikEndDate() != null && kimlik.getDaysLeft() <= 60) {
-            kimlik.setNotified60Days(true);
-        } else {
+        if(kimlik.getId() == null){
             kimlik.setNotified60Days(false);
         }
+
 
         return kimlikRepository.save(kimlik);
     }
