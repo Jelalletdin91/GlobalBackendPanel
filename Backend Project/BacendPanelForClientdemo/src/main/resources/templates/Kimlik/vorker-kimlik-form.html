@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Worker Kimlik Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body{
+            background:#f6f7fb;
+        }
+
+        .form-card{
+            border:none;
+            border-radius:18px;
+            box-shadow:0 10px 28px rgba(0,0,0,.08);
+            overflow:hidden;
+        }
+
+        .card-header-custom{
+            background:#0d6efd;
+            color:white;
+            padding:1rem 1.25rem;
+        }
+
+        .card-header-custom h4{
+            margin:0;
+            font-weight:700;
+        }
+
+        .form-label{
+            font-weight:600;
+        }
+
+        .btn-soft{
+            border-radius:12px;
+            padding:.6rem 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="card form-card">
+                <div class="card-header-custom">
+                    <h4>Worker Kimlik Form</h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <form th:action="@{/VorkerKimlik/save}" th:object="${vorkerKimlik}" method="POST">
+
+                        <input type="hidden" th:field="*{id}"/>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                <input type="text" th:field="*{firstName}" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" th:field="*{lastName}" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" th:field="*{email}" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Phone Number</label>
+                                <input type="text" th:field="*{phoneNumber}" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Kimlik Number</label>
+                            <input type="text" th:field="*{kimlikNumber}" class="form-control" required>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Kimlik Start Date</label>
+                                <input type="date" th:field="*{kimlikStartDate}" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Kimlik End Date</label>
+                                <input type="date" th:field="*{kimlikEndDate}" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Workplace</label>
+                            <input type="text" th:field="*{workplace}" class="form-control" placeholder="Enter workplace">
+                        </div>
+
+                        <div class="d-flex justify-content-between flex-wrap gap-2">
+                            <a th:href="@{/VorkerKimlik/list}" class="btn btn-secondary btn-soft">
+                                ⬅ Back
+                            </a>
+
+                            <button type="submit" class="btn btn-primary btn-soft">
+                                💾 Save
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
