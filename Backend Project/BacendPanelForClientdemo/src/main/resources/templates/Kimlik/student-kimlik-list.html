@@ -8,39 +8,74 @@
 
     <style>
         :root{
-          --soft-bg:#f6f7fb;
-          --card-radius:16px;
-          --shadow: 0 10px 28px rgba(0,0,0,.08);
+            --soft-bg:#f6f7fb;
+            --card-radius:16px;
+            --shadow:0 10px 28px rgba(0,0,0,.08);
         }
+
         body{ background:var(--soft-bg); }
 
-        .page-title{ font-weight:800; letter-spacing:.2px; }
+        .page-title{ font-weight:800; }
+
         .card-shell{
-          border:0; border-radius:var(--card-radius);
-          box-shadow: var(--shadow);
-          overflow:hidden;
+            border:0;
+            border-radius:var(--card-radius);
+            box-shadow:var(--shadow);
+            background:#fff;
         }
+
         .muted{ color:#6c757d; }
+
         .badge-days{
-          font-weight:700;
-          padding:.45rem .65rem;
-          border-radius:999px;
+            font-weight:700;
+            padding:.45rem .65rem;
+            border-radius:999px;
         }
 
         .key{ font-size:.78rem; color:#6c757d; }
         .val{ font-weight:600; }
 
         .btn-soft{
-          border-radius:12px;
-          padding:.55rem .9rem;
+            border-radius:12px;
+            padding:.55rem .9rem;
         }
 
         .truncate{
-          max-width: 100%;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display:block;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            display:block;
+        }
+
+        /* PRO HEADER */
+        .top-actions{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+
+        .home-link-pro{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            padding:9px 14px;
+            border-radius:12px;
+            background:#fff;
+            border:1px solid #dee2e6;
+            text-decoration:none;
+            font-weight:600;
+            transition:.2s;
+        }
+
+        .home-link-pro:hover{
+            background:#0d6efd;
+            color:#fff;
+        }
+
+        .add-btn{
+            border-radius:12px;
+            padding:9px 16px;
+            font-weight:600;
         }
     </style>
 </head>
@@ -48,101 +83,74 @@
 <body>
 <div class="container py-4">
 
-    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+    <div class="d-flex justify-content-between mb-3">
         <div>
             <div class="text-muted small">Directory</div>
-            <h2 class="page-title mb-0">Student Kimlik</h2>
+            <h2 class="page-title">Student Kimlik</h2>
         </div>
 
-        <a th:href="@{/Student_kimlik/showForm}" class="btn btn-primary btn-sm px-3">
-            + Add Student
-        </a>
+        <div class="top-actions">
+            <a th:href="@{/}" class="home-link-pro">
+                🏠 Dashboard
+            </a>
+
+            <a th:href="@{/Student_kimlik/showForm}" class="btn btn-primary add-btn">
+                + Add Student
+            </a>
+        </div>
     </div>
 
-    <!-- ✅ GRID для всех экранов -->
     <div class="row g-3">
-        <div class="col-12 col-md-6 col-lg-4 col-xxl-3" th:each="s : ${studentKimliks}">
+        <div class="col-md-4" th:each="s : ${studentKimliks}">
             <div class="card card-shell">
                 <div class="card-body">
 
-                    <!-- top row -->
-                    <div class="d-flex justify-content-between align-items-start gap-2">
-                        <div class="flex-grow-1">
-                            <div class="fw-bold fs-5 truncate"
-                                 th:text="${s.firstName + ' ' + s.lastName}"
-                                 th:title="${s.firstName + ' ' + s.lastName}">
-                                Name
-                            </div>
-                            <div class="muted small truncate" th:text="${s.phoneNumber}" th:title="${s.phoneNumber}">
-                                phone
-                            </div>
-                            <div class="muted small truncate" th:text="${s.email}" th:title="${s.email}">
-                                email
-                            </div>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="fw-bold"
+                                 th:text="${s.firstName + ' ' + s.lastName}"></div>
+
+                            <div class="muted small" th:text="${s.phoneNumber}"></div>
+                            <div class="muted small" th:text="${s.email}"></div>
                         </div>
 
-                        <!-- days badge -->
                         <span class="badge-days"
-                              th:classappend="${s.daysLeft < 0} ? ' bg-danger text-white' : (${s.daysLeft <= 60} ? ' bg-warning text-dark' : ' bg-dark text-white')"
-                              th:text="${s.daysLeft + ' d'}">
-              0 d
-            </span>
+                              th:classappend="${s.daysLeft < 0} ? ' bg-danger text-white' : (${s.daysLeft <= 60} ? ' bg-warning' : ' bg-dark text-white')"
+                              th:text="${s.daysLeft + ' d'}"></span>
                     </div>
 
-                    <hr class="my-3">
+                    <hr>
 
-                    <!-- Kimlik info -->
-                    <div class="mb-2">
-                        <div class="key">Kimlik Number</div>
-                        <div class="val truncate" th:text="${s.kimlikNumber}" th:title="${s.kimlikNumber}">-</div>
-                    </div>
+                    <div class="key">Kimlik</div>
+                    <div class="val" th:text="${s.kimlikNumber}"></div>
 
-                    <div class="row g-2 mb-2">
+                    <div class="row mt-2">
                         <div class="col-6">
-                            <div class="key">Kimlik Start</div>
-                            <div class="val" th:text="${s.kimlikStartDate}">-</div>
+                            <div class="key">Start</div>
+                            <div class="val" th:text="${s.kimlikStartDate}"></div>
                         </div>
                         <div class="col-6 text-end">
-                            <div class="key">Kimlik Expiry</div>
-                            <div class="val" th:text="${s.kimlikEndDate}">-</div>
+                            <div class="key">End</div>
+                            <div class="val" th:text="${s.kimlikEndDate}"></div>
                         </div>
                     </div>
 
-                    <hr class="my-3">
+                    <hr>
 
-                    <!-- University info -->
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <div class="key">University</div>
-                            <div class="val truncate" th:text="${s.university}" th:title="${s.university}">-</div>
-                        </div>
-                        <div class="col-6 text-end">
-                            <div class="key">Department</div>
-                            <div class="val truncate" th:text="${s.department}" th:title="${s.department}">-</div>
-                        </div>
-                    </div>
+                    <div class="key">University</div>
+                    <div class="val" th:text="${s.university}"></div>
 
-                    <div class="row g-2 mt-2">
-                        <div class="col-6">
-                            <div class="key">Study Begin</div>
-                            <div class="val" th:text="${s.universityStartDate}">-</div>
-                        </div>
-                        <div class="col-6 text-end">
-                            <div class="key">Study End</div>
-                            <div class="val" th:text="${s.universityEndDate}">-</div>
-                        </div>
-                    </div>
+                    <div class="key mt-2">Department</div>
+                    <div class="val" th:text="${s.department}"></div>
 
-                    <!-- actions -->
                     <div class="d-flex gap-2 mt-3">
                         <a th:href="@{/Student_kimlik/showStudentKimlikForUpdate(studentKimlikId=${s.id})}"
-                           class="btn btn-outline-primary btn-soft btn-sm flex-fill">
+                           class="btn btn-outline-primary btn-soft flex-fill">
                             Update
                         </a>
 
                         <a th:href="@{/Student_kimlik/delete(studentKimlikId=${s.id})}"
-                           class="btn btn-outline-danger btn-soft btn-sm flex-fill"
-                           onclick="return confirm('Are you sure you want to delete this student?')">
+                           class="btn btn-outline-danger btn-soft flex-fill">
                             Delete
                         </a>
                     </div>

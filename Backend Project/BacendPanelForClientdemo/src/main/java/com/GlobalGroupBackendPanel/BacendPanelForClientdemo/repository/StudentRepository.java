@@ -14,4 +14,6 @@ public interface StudentRepository extends JpaRepository<StudentKimlik, Long> {
 
     // САМЫЙ ВАЖНЫЙ метод:
     List<StudentKimlik> findByNotified60DaysFalseAndKimlikEndDateLessThanEqual(LocalDate date);
+
+    long count();
 }

@@ -8,4 +8,5 @@ import java.util.List;
 public interface KimlikRepository extends JpaRepository<Kimlik, Long> {
     List<Kimlik> findAllByOrderByKimlikEndDateAsc();
     List<Kimlik> findByNotified60DaysFalse();
+    long count();
 }

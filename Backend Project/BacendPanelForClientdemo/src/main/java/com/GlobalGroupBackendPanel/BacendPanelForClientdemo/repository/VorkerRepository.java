@@ -16,4 +16,6 @@ public interface VorkerRepository extends JpaRepository<VorkerKimlik, Long> {
     List<VorkerKimlik> findByNotified60DaysFalseAndKimlikEndDateLessThanEqual(LocalDate date);
 
     List<VorkerKimlik> findAllByOrderByKimlikEndDateAsc();
+
+    long count();
 }

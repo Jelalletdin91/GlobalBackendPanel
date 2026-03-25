@@ -92,26 +92,26 @@
         </div>
 
         <!-- STATS -->
-        <div class="row g-3 mb-4">
+        <div class="row g-3 mb-4" sec:authorize="hasRole('Yonetici')">
 
             <div class="col-md-4">
                 <div class="stats-card">
                     <div class="stats-title">Clients</div>
-                    <div class="stats-value">245</div>
+                    <div class="stats-value" th:text="${kimlikCounts}">0</div>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="stats-card">
                     <div class="stats-title">Students</div>
-                    <div class="stats-value">120</div>
+                    <div class="stats-value" th:text="${studentCounts}">0</div>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="stats-card">
                     <div class="stats-title">Workers</div>
-                    <div class="stats-value">89</div>
+                    <div class="stats-value" th:text="${vorkerCounts}">0</div>
                 </div>
             </div>
 

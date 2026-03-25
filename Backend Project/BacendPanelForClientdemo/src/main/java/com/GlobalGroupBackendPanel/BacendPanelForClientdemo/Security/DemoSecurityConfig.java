@@ -24,7 +24,7 @@ public class DemoSecurityConfig {
         UserDetails nurmuhammet = User.builder()
                 .username("Nurmuhammet")
                 .password(passwordEncoder().encode("Rejepov96!"))
-                .roles("Kimlik", "StudentKimlik", "VorkerKimlik", "EMPLOYEE")
+                .roles("Yonetici", "Kimlik", "StudentKimlik", "VorkerKimlik", "EMPLOYEE")
                 .build();
 
         UserDetails kimlik = User.builder()
