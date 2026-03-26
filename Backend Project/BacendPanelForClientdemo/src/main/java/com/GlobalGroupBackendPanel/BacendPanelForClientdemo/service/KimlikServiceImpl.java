@@ -14,10 +14,12 @@ import java.util.Optional;
 public class KimlikServiceImpl implements KimlikerService{
 
     private KimlikRepository kimlikRepository;
+    private final ActivityLogService activityLogService;
 
     @Autowired
-    public KimlikServiceImpl(KimlikRepository theKimlikRepository){
+    public KimlikServiceImpl(KimlikRepository theKimlikRepository, ActivityLogService activityLogService){
         kimlikRepository=theKimlikRepository;
+        this.activityLogService=activityLogService;
     }
 
 
@@ -54,12 +56,22 @@ public class KimlikServiceImpl implements KimlikerService{
             kimlik.setNotified60Days(false);
         }
 
+        Kimlik savedKimlik = kimlikRepository.save(kimlik);
 
-        return kimlikRepository.save(kimlik);
+        String fullName = savedKimlik.getFirstName() + " " + savedKimlik.getLastName();
+
+        if (kimlik.getId() == null){
+            activityLogService.save("CREATE", "CLIENT", fullName, "new client added: "+ fullName);
+        }else {
+            activityLogService.save("UDATE", "CLIENT", fullName, "Client Updated: " + fullName);
+        }
+
+        return savedKimlik;
     }
 
     @Override
     public void deleteById(Long theId) {
+
         kimlikRepository.deleteById(theId);
     }
 
