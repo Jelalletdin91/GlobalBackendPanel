@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> {
 
-    List<ActivityLog> findTop5ByOrderByCreatedAtdesc();
+    List<ActivityLog> findAllByOrderByCreatedAtDesc();
 
+    List<ActivityLog> findTop5ByOrderByCreatedAtDesc();
 }

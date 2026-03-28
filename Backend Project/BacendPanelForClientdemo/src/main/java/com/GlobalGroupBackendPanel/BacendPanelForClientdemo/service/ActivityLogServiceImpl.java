@@ -24,6 +24,11 @@ public class ActivityLogServiceImpl implements ActivityLogService{
 
     @Override
     public List<ActivityLog> findTop5() {
-        return activityLogRepository.findTop5ByOrderByCreatedAtdesc();
+        return activityLogRepository.findTop5ByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    public List<ActivityLog> findAll() {
+        return activityLogRepository.findAllByOrderByCreatedAtDesc();
     }
 }

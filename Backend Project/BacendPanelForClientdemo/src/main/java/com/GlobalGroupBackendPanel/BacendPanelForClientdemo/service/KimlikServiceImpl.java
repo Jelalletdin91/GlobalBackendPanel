@@ -52,7 +52,9 @@ public class KimlikServiceImpl implements KimlikerService{
     @Override
     public Kimlik save(Kimlik kimlik) {
 
-        if(kimlik.getId() == null){
+        boolean isNew = (kimlik.getId() == null);
+
+        if (isNew) {
             kimlik.setNotified60Days(false);
         }
 
@@ -60,10 +62,10 @@ public class KimlikServiceImpl implements KimlikerService{
 
         String fullName = savedKimlik.getFirstName() + " " + savedKimlik.getLastName();
 
-        if (kimlik.getId() == null){
-            activityLogService.save("CREATE", "CLIENT", fullName, "new client added: "+ fullName);
-        }else {
-            activityLogService.save("UDATE", "CLIENT", fullName, "Client Updated: " + fullName);
+        if (isNew) {
+            activityLogService.save("CREATE", "KIMLIK", fullName, "New client added: " + fullName);
+        } else {
+            activityLogService.save("UPDATE", "KIMLIK", fullName, "Client updated: " + fullName);
         }
 
         return savedKimlik;
@@ -72,7 +74,12 @@ public class KimlikServiceImpl implements KimlikerService{
     @Override
     public void deleteById(Long theId) {
 
+        Kimlik kimlik = findById(theId);
+
+        String fullName = kimlik.getFirstName() + " " + kimlik.getLastName();
         kimlikRepository.deleteById(theId);
+
+        activityLogService.save("DELETE", "KIMLIK", fullName, "Client Deleted: " + fullName);
     }
 
 

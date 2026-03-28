@@ -1,42 +1,41 @@
 package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity;
 
 import jakarta.persistence.*;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="activity_log")
+@Table(name = "activity_log")
 public class ActivityLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Long id;
 
-    @Column(name="action_type")
+    @Column(name = "action_type")
     private String actionType;
 
-    @Column(name="entity_type")
+    @Column(name = "entity_type")
     private String entityType;
 
-    @Column(name="entity_name")
+    @Column(name = "entity_name")
     private String entityName;
 
-    @Column(name="description")
+    @Column(name = "description")
     private String description;
 
-    @Column(name="created_at")
-    private LocalDateTime creataedAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
+    public ActivityLog() {
+    }
 
-    public ActivityLog(){}
-
-    public ActivityLog(String actionType, String entityName, String entityType, String description) {
+    public ActivityLog(String actionType, String entityType, String entityName, String description) {
         this.actionType = actionType;
-        this.entityName=entityName;
-        this.entityType=entityType;
-        this.description=description;
+        this.entityType = entityType;
+        this.entityName = entityName;
+        this.description = description;
+        this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -79,12 +78,19 @@ public class ActivityLog {
         this.description = description;
     }
 
-    public LocalDateTime getCreataedAt() {
-        return creataedAt;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreataedAt(LocalDateTime creataedAt) {
-        this.creataedAt = creataedAt;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
     }
 
     @Override
@@ -95,7 +101,7 @@ public class ActivityLog {
                 ", entityType='" + entityType + '\'' +
                 ", entityName='" + entityName + '\'' +
                 ", description='" + description + '\'' +
-                ", creataedAt=" + creataedAt +
+                ", createdAt=" + createdAt +
                 '}';
     }
 }

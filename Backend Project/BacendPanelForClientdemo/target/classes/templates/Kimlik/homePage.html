@@ -97,21 +97,21 @@
             <div class="col-md-4">
                 <div class="stats-card">
                     <div class="stats-title">Clients</div>
-                    <div class="stats-value" th:text="${kimlikCounts}">0</div>
+                    <div class="stats-value" th:text="${clientCount}">0</div>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="stats-card">
                     <div class="stats-title">Students</div>
-                    <div class="stats-value" th:text="${studentCounts}">0</div>
+                    <div class="stats-value" th:text="${studentCount}">0</div>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="stats-card">
                     <div class="stats-title">Workers</div>
-                    <div class="stats-value" th:text="${vorkerCounts}">0</div>
+                    <div class="stats-value" th:text="${workerCount}">0</div>
                 </div>
             </div>
 
@@ -144,13 +144,23 @@
         </div>
 
         <!-- ACTIVITY -->
-        <div class="activity-box">
-            <h5>Recent Activity</h5>
-            <ul>
-                <li>New student added</li>
-                <li>Kimlik updated</li>
-                <li>Worker expired</li>
+        <div class="mt-4 p-4 bg-white rounded-4 shadow-sm" sec:authorize="hasRole('Yonetici')">
+            <h4 class="fw-bold mb-3">Recent Activity</h4>
+
+            <div th:if="${#lists.isEmpty(recentActivities)}" class="text-muted">
+                No recent activity yet.
+            </div>
+
+            <ul class="mb-0 ps-3" th:if="${!#lists.isEmpty(recentActivities)}">
+                <li th:each="a : ${recentActivities}" class="mb-2">
+                    <span th:text="${a.description}">Activity text</span>
+                    <span class="text-muted small"
+                          th:text="${' - ' + #temporals.format(a.createdAt, 'dd.MM.yyyy HH:mm')}">
+                time
+            </span>
+                </li>
             </ul>
+            <a th:href="@{/RecentActivities}">More</a>
         </div>
 
     </div>

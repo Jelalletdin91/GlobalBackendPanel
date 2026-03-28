@@ -1,6 +1,7 @@
 package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service;
 
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.StudentKimlik;
+import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.ActivityLogRepository;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,11 +11,14 @@ import java.util.Optional;
 @Service
 public class StudentServiceImpl implements StudentService{
 
-    StudentRepository studentRepository;
+     private StudentRepository studentRepository;
+     private final ActivityLogService activityLogService;
+
 
     @Autowired
-    public StudentServiceImpl(StudentRepository studentRepository){
+    public StudentServiceImpl(StudentRepository studentRepository, ActivityLogService activityLogService){
         this.studentRepository=studentRepository;
+        this.activityLogService=activityLogService;
     }
 
 
@@ -44,17 +48,33 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public StudentKimlik save(StudentKimlik studentKimlik) {
 
-        if(studentKimlik.getId() == null){
+        boolean isNew = (studentKimlik.getId() == null);
+
+        if (isNew) {
             studentKimlik.setNotified60days(false);
         }
 
+        StudentKimlik savedStudentKimlik = studentRepository.save(studentKimlik);
+        String fullName = savedStudentKimlik.getFirstName() + " " + savedStudentKimlik.getLastName();
 
-        return studentRepository.save(studentKimlik);
+        if (isNew) {
+            activityLogService.save("CREATE", "STUDENT", fullName, "New student added: " + fullName);
+        } else {
+            activityLogService.save("UPDATE", "STUDENT", fullName, "Student updated: " + fullName);
+        }
+
+        return savedStudentKimlik;
     }
 
     @Override
     public void deleteById(Long id) {
+
+        StudentKimlik studentKimlik = findById(id);
+        String fullName=studentKimlik.getFirstName()+" " +studentKimlik.getLastName();
+
         studentRepository.deleteById(id);
+
+        activityLogService.save("DELETE", "STUDENT", fullName, "Student Deleted: "+ fullName);
 
 
     }

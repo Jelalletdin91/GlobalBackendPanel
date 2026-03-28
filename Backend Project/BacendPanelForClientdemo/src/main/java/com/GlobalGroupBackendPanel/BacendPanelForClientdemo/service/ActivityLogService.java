@@ -8,4 +8,6 @@ public interface ActivityLogService {
 
     void save(String actionType, String entityType, String entityName, String description);
     List<ActivityLog> findTop5();
+
+    List<ActivityLog> findAll();
 }
