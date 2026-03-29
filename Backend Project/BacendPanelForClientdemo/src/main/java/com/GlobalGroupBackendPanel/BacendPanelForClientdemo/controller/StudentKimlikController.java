@@ -2,6 +2,7 @@ package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.controller;
 
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.StudentKimlik;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service.StudentService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,10 +34,16 @@ public class StudentKimlikController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute("studentKimlik") StudentKimlik studentKimlik) {
+    public String save(@ModelAttribute("studentKimlik") StudentKimlik studentKimlik, Model model) {
         studentKimlik.setNotified60days(false);
-        studentService.save(studentKimlik);
-        return "redirect:/Student_kimlik/list";
+        try {
+            studentService.save(studentKimlik);
+            return "redirect:/Student_kimlik/list";
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("studentKimlik", studentKimlik);
+            model.addAttribute("errorMessage", "This Kimlik number always exist!");
+            return "redirect:/Student_kimlik/showForm";
+        }
     }
 
     @GetMapping("/showStudentKimlikForUpdate")

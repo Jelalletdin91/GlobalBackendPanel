@@ -2,6 +2,7 @@ package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.controller;
 
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.VorkerKimlik;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service.VorkerKimlikService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,10 +34,16 @@ public class VorkerKimlikController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute("vorkerKimlik") VorkerKimlik vorkerKimlik) {
+    public String save(@ModelAttribute("vorkerKimlik") VorkerKimlik vorkerKimlik, Model model) {
         vorkerKimlik.setNotified60Days(false);
-        vorkerKimlikService.save(vorkerKimlik);
-        return "redirect:/VorkerKimlik/list";
+        try {
+            vorkerKimlikService.save(vorkerKimlik);
+            return "redirect:/VorkerKimlik/list";
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("vorkerKimlik", vorkerKimlik);
+            model.addAttribute("errorMessage", "This Kimlik number always exist!");
+            return "redirect:/VorkerKimlik/showForm";
+        }
     }
 
     @GetMapping("/showVorkerKimlikForUpdate")

@@ -2,6 +2,7 @@ package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.controller;
 
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.Kimlik;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service.KimlikerService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,11 +40,17 @@ public class KimlikController {
     }
 
     @PostMapping("/save")
-    public  String save(@ModelAttribute("kimlik") Kimlik kimlik ){
+    public  String save(@ModelAttribute("kimlik") Kimlik kimlik, Model model ){
 
-        kimlikerService.save(kimlik);
+        try {
+            kimlikerService.save(kimlik);
+            return "redirect:/kimlik/list";
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("kimlik", kimlik);
+            model.addAttribute("errorMessage", "This Kimlik number always exist!");
+            return "redirect:/kimlik/showForm";
+        }
 
-        return "redirect:/kimlik/list";
 
     }
 
