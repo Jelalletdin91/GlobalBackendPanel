@@ -39,12 +39,15 @@ public class VorkerKimlikController {
         try {
             vorkerKimlikService.save(vorkerKimlik);
             return "redirect:/VorkerKimlik/list";
-        } catch (DataIntegrityViolationException e) {
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
             model.addAttribute("vorkerKimlik", vorkerKimlik);
-            model.addAttribute("errorMessage", "This Kimlik number always exist!");
-            return "redirect:/VorkerKimlik/showForm";
-        }
-    }
+            model.addAttribute("errorMessage", "This kimlik number already exists. Please enter a different kimlik number.");
+            return "Kimlik/vorker-kimlik-form";
+        } catch (Exception e) {
+            model.addAttribute("vorkerKimlik", vorkerKimlik);
+            model.addAttribute("errorMessage", "Something went wrong while saving the record.");
+            return "Kimlik/vorker-kimlik-form";
+        }}
 
     @GetMapping("/showVorkerKimlikForUpdate")
     public String update(@RequestParam("vorkerKimlikId") Long id, Model model) {

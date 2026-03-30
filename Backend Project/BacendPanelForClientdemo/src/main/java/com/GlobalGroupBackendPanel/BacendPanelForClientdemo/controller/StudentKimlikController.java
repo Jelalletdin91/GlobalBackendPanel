@@ -1,6 +1,7 @@
 package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.controller;
 
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.StudentKimlik;
+import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service.KimlikServiceImpl;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service.StudentService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -13,7 +14,7 @@ import java.util.List;
 @RequestMapping("/Student_kimlik")
 public class StudentKimlikController {
 
-    private final StudentService studentService;
+    private StudentService studentService;
 
     public StudentKimlikController(StudentService studentService) {
         this.studentService = studentService;
@@ -39,12 +40,17 @@ public class StudentKimlikController {
         try {
             studentService.save(studentKimlik);
             return "redirect:/Student_kimlik/list";
-        } catch (DataIntegrityViolationException e) {
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            model.addAttribute("StudentKimlik", studentKimlik);
+            model.addAttribute("errorMessage", "This kimlik number already exists. Please enter a different kimlik number.");
+            return "Kimlik/student-kimlik-form";
+        } catch (Exception e) {
             model.addAttribute("studentKimlik", studentKimlik);
-            model.addAttribute("errorMessage", "This Kimlik number always exist!");
-            return "redirect:/Student_kimlik/showForm";
+            model.addAttribute("errorMessage", "Something went wrong while saving the record.");
+            return "Kimlik/student-kimlik-form";
         }
     }
+
 
     @GetMapping("/showStudentKimlikForUpdate")
     public String update(@RequestParam("studentKimlikId") Long id, Model model) {

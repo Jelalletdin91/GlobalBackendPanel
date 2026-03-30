@@ -40,18 +40,19 @@ public class KimlikController {
     }
 
     @PostMapping("/save")
-    public  String save(@ModelAttribute("kimlik") Kimlik kimlik, Model model ){
-
+    public String save(@ModelAttribute("kimlik") Kimlik kimlik, Model model) {
         try {
             kimlikerService.save(kimlik);
             return "redirect:/kimlik/list";
-        } catch (DataIntegrityViolationException e) {
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
             model.addAttribute("kimlik", kimlik);
-            model.addAttribute("errorMessage", "This Kimlik number always exist!");
-            return "redirect:/kimlik/showForm";
+            model.addAttribute("errorMessage", "This kimlik number already exists. Please enter a different kimlik number.");
+            return "Kimlik/form";
+        } catch (Exception e) {
+            model.addAttribute("kimlik", kimlik);
+            model.addAttribute("errorMessage", "Something went wrong while saving the record.");
+            return "Kimlik/form";
         }
-
-
     }
 
     @GetMapping("/showFormForUpdate")
