@@ -50,5 +50,21 @@ public class EmployeeController {
     }
 
     @GetMapping("/showFormForUpdate")
+    public String showFormForUpdate(@RequestParam("employeeId") Long id, Model model){
+
+        AppUser employee = employeeService.findById(id);
+
+        model.addAttribute("employee", employee);
+
+        return "Kimlik/employee-form";
+    }
+
+    @GetMapping("/delete")
+    public String deleteById(@RequestParam("employeeId") Long id){
+
+        employeeService.deleteById(id);
+
+        return "redirect:/employee/list";
+    }
 
 }

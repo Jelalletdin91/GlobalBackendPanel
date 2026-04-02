@@ -86,9 +86,22 @@
                 <small>Welcome, <span sec:authentication="name"></span></small>
             </div>
 
-            <form th:action="@{/logout}" method="post">
-                <button class="btn btn-danger logout-btn">Logout</button>
-            </form>
+            <div class="d-flex align-items-center">
+
+                <a th:href="@{/employee/list}"
+                   sec:authorize="hasRole('Yonetici')"
+                   class="btn btn-success me-2"
+                   style="border-radius:12px; font-weight:600;">
+                    ➕ Add Employee
+                </a>
+
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button class="btn btn-danger logout-btn">
+                        Logout
+                    </button>
+                </form>
+
+            </div>
         </div>
 
         <!-- STATS -->
