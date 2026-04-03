@@ -9,4 +9,11 @@ public interface KimlikRepository extends JpaRepository<Kimlik, Long> {
     List<Kimlik> findAllByOrderByKimlikEndDateAsc();
     List<Kimlik> findByNotified60DaysFalse();
     long count();
+    List<Kimlik> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrKimlikNumberContainingIgnoreCaseOrPhoneNumberContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByKimlikEndDateAsc(
+            String firstName,
+            String lastName,
+            String kimlikNumber,
+            String phoneNumber,
+            String email);
+
 }

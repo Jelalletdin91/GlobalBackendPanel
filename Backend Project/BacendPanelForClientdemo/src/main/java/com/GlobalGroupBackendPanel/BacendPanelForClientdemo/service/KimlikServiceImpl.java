@@ -32,6 +32,15 @@ public class KimlikServiceImpl implements KimlikerService{
     }
 
     @Override
+    public List<Kimlik> search(String keyboard) {
+        if (keyboard == null || keyboard.trim().isEmpty()){
+            return kimlikRepository.findAllByOrderByKimlikEndDateAsc();
+        }else {
+            return kimlikRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrKimlikNumberContainingIgnoreCaseOrPhoneNumberContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByKimlikEndDateAsc(keyboard, keyboard, keyboard, keyboard, keyboard);
+        }
+    }
+
+    @Override
     public Kimlik findById(Long theId) {
 
         Optional<Kimlik> result = kimlikRepository.findById(theId);

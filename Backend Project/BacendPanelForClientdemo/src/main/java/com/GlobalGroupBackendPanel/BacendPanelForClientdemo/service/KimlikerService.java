@@ -8,6 +8,8 @@ public interface KimlikerService {
 
     List<Kimlik> findAll();
 
+    List<Kimlik> search(String keyboard);
+
     Kimlik findById(Long theId);
 
     Kimlik save(Kimlik kimlik);
