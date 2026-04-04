@@ -29,6 +29,15 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
+    public List<StudentKimlik> search(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()){
+            return studentRepository.findAllByOrderByKimlikEndDateAsc();
+        }else {
+            return studentRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrKimlikNumberContainingIgnoreCaseOrPhoneNumberContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByKimlikEndDateAsc(keyword, keyword, keyword, keyword, keyword);
+        }
+    }
+
+    @Override
     public StudentKimlik findById(Long id) {
 
         Optional<StudentKimlik> result = studentRepository.findById(id);

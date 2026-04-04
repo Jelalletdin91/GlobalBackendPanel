@@ -20,9 +20,10 @@ public class VorkerKimlikController {
     }
 
     @GetMapping("/list")
-    public String list(Model model) {
-        List<VorkerKimlik> vorkerKimliks = vorkerKimlikService.findAll();
+    public String list(@RequestParam(value="keyword", required = false) String keyword, Model model) {
+        List<VorkerKimlik> vorkerKimliks = vorkerKimlikService.search(keyword);
         model.addAttribute("vorkerKimliks", vorkerKimliks);
+        model.addAttribute("keyword", keyword);
         return "Kimlik/vorker-kimlik-list";
     }
 

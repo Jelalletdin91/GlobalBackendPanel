@@ -1,5 +1,6 @@
 package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository;
 
+import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.Kimlik;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.StudentKimlik;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -16,4 +17,10 @@ public interface StudentRepository extends JpaRepository<StudentKimlik, Long> {
     List<StudentKimlik> findByNotified60DaysFalseAndKimlikEndDateLessThanEqual(LocalDate date);
 
     long count();
+    List<StudentKimlik> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrKimlikNumberContainingIgnoreCaseOrPhoneNumberContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByKimlikEndDateAsc(
+            String firstName,
+            String lastName,
+            String kimlikNumber,
+            String phoneNumber,
+            String email);
 }

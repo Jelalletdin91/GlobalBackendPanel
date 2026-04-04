@@ -21,9 +21,10 @@ public class StudentKimlikController {
     }
 
     @GetMapping("/list")
-    public String list(Model model) {
-        List<StudentKimlik> studentKimliks = studentService.findAll();
+    public String list(@RequestParam(value="keyword", required = false)String keyword, Model model) {
+        List<StudentKimlik> studentKimliks = studentService.search(keyword);
         model.addAttribute("studentKimliks", studentKimliks);
+        model.addAttribute("keyword", keyword);
         return "Kimlik/student-kimlik-list";
     }
 

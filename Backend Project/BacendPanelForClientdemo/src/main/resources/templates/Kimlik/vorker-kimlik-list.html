@@ -102,6 +102,37 @@
       font-weight:600;
       box-shadow:0 6px 16px rgba(13,110,253,.18);
     }
+
+    .search-box{
+      background:#fff;
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      padding:16px;
+      margin-bottom:22px;
+    }
+
+    .search-input{
+      border-radius:12px;
+      min-height:48px;
+    }
+
+    .search-btn{
+      border-radius:12px;
+      min-height:48px;
+      font-weight:600;
+    }
+
+    .reset-btn{
+      border-radius:12px;
+      min-height:48px;
+      font-weight:600;
+    }
+
+    .result-info{
+      color:#6c757d;
+      font-size:.95rem;
+      margin-bottom:14px;
+    }
   </style>
 </head>
 
@@ -124,6 +155,45 @@
         + Add Worker
       </a>
     </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-box">
+    <form th:action="@{/VorkerKimlik/list}" method="get">
+      <div class="row g-2">
+        <div class="col-12 col-md-8 col-lg-9">
+          <input type="text"
+                 name="keyword"
+                 th:value="${keyword}"
+                 class="form-control search-input"
+                 placeholder="Search by first name, last name, kimlik number, phone, email or workplace">
+        </div>
+
+        <div class="col-6 col-md-2 col-lg-1">
+          <button type="submit" class="btn btn-dark w-100 search-btn">
+            Search
+          </button>
+        </div>
+
+        <div class="col-6 col-md-2 col-lg-2">
+          <a th:href="@{/VorkerKimlik/list}"
+             class="btn btn-outline-secondary w-100 reset-btn d-flex align-items-center justify-content-center">
+            Reset
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- SEARCH INFO -->
+  <div class="result-info" th:if="${keyword != null and !#strings.isEmpty(keyword)}">
+    Search results for:
+    <strong th:text="${keyword}">keyword</strong>
+  </div>
+
+  <!-- EMPTY RESULT -->
+  <div th:if="${#lists.isEmpty(vorkerKimliks)}" class="alert alert-warning rounded-4 shadow-sm border-0">
+    No workers found.
   </div>
 
   <div class="row g-3">

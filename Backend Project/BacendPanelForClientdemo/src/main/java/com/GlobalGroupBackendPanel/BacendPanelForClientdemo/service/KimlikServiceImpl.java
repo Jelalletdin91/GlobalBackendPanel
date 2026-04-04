@@ -32,11 +32,11 @@ public class KimlikServiceImpl implements KimlikerService{
     }
 
     @Override
-    public List<Kimlik> search(String keyboard) {
-        if (keyboard == null || keyboard.trim().isEmpty()){
+    public List<Kimlik> search(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()){
             return kimlikRepository.findAllByOrderByKimlikEndDateAsc();
         }else {
-            return kimlikRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrKimlikNumberContainingIgnoreCaseOrPhoneNumberContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByKimlikEndDateAsc(keyboard, keyboard, keyboard, keyboard, keyboard);
+            return kimlikRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrKimlikNumberContainingIgnoreCaseOrPhoneNumberContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByKimlikEndDateAsc(keyword, keyword, keyword, keyword, keyword);
         }
     }
 

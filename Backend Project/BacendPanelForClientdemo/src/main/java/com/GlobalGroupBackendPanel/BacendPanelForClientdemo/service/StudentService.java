@@ -8,6 +8,8 @@ public interface StudentService {
 
     List<StudentKimlik> findAll();
 
+    List<StudentKimlik> search(String keyword);
+
     StudentKimlik findById(Long id);
 
     StudentKimlik save(StudentKimlik studentKimlik);

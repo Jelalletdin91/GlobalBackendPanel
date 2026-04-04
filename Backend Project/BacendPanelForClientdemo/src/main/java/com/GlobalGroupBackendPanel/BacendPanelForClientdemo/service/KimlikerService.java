@@ -8,7 +8,7 @@ public interface KimlikerService {
 
     List<Kimlik> findAll();
 
-    List<Kimlik> search(String keyboard);
+    List<Kimlik> search(String keyword);
 
     Kimlik findById(Long theId);
 

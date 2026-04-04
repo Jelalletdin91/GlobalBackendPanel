@@ -20,10 +20,11 @@ public class KimlikController {
     }
 
     @GetMapping("/list")
-    public String list (Model theModel){
-        List<Kimlik> kimliks = kimlikerService.findAll();
+    public String list (@RequestParam(value="keyword", required = false) String keyword, Model theModel){
+        List<Kimlik> kimliks = kimlikerService.search(keyword);
 
         theModel.addAttribute("kimliks", kimliks);
+        theModel.addAttribute("keyword", keyword);
 
         return "Kimlik/list_of_kimlik";
     }

@@ -18,4 +18,10 @@ public interface VorkerRepository extends JpaRepository<VorkerKimlik, Long> {
     List<VorkerKimlik> findAllByOrderByKimlikEndDateAsc();
 
     long count();
+    List<VorkerKimlik> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrKimlikNumberContainingIgnoreCaseOrPhoneNumberContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByKimlikEndDateAsc(
+            String firstName,
+            String lastName,
+            String kimlikNumber,
+            String phoneNumber,
+            String email);
 }

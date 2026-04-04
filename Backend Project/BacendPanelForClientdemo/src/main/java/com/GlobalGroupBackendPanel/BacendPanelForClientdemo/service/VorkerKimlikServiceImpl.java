@@ -28,6 +28,15 @@ public class VorkerKimlikServiceImpl implements VorkerKimlikService{
     }
 
     @Override
+    public List<VorkerKimlik> search(String keyword) {
+        if(keyword == null || keyword.trim().isEmpty()){
+            return vorkerRepository.findAllByOrderByKimlikEndDateAsc();
+        }else{
+            return vorkerRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrKimlikNumberContainingIgnoreCaseOrPhoneNumberContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByKimlikEndDateAsc(keyword, keyword, keyword, keyword, keyword);
+        }
+    }
+
+    @Override
     public VorkerKimlik findById(Long theId) {
 
         Optional<VorkerKimlik> result = vorkerRepository.findById(theId);

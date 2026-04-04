@@ -8,6 +8,8 @@ public interface VorkerKimlikService {
 
     List<VorkerKimlik> findAll();
 
+    List<VorkerKimlik> search(String keyword);
+
     VorkerKimlik findById(Long theId);
 
     VorkerKimlik save (VorkerKimlik vorkerKimlik);
