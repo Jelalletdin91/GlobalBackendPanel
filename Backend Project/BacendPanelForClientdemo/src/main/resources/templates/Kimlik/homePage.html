@@ -4,180 +4,270 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Kimlik Dashboard</title>
+    <title>Kimlik OS | Enterprise Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        body{
-            background:#f4f7fb;
-            font-family: 'Segoe UI', sans-serif;
+        :root {
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --sidebar-bg: #ffffff;
+            --body-bg: #f9fafb;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --card-border: rgba(229, 231, 235, 0.8);
         }
 
-        .container-box{
-            background:#fff;
-            border-radius:20px;
-            padding:25px;
-            box-shadow:0 10px 30px rgba(0,0,0,.08);
+        body {
+            background-color: var(--body-bg);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            margin: 0;
         }
 
-        .topbar{
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:20px;
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--card-border);
+            height: 100vh;
+            position: fixed;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            z-index: 1050;
+            transition: transform 0.3s ease;
         }
 
-        .stats-card{
-            border-radius:16px;
-            padding:20px;
-            background:#fff;
-            box-shadow:0 6px 20px rgba(0,0,0,.06);
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 12px 32px;
         }
 
-        .stats-title{
-            font-size:14px;
-            color:#6c757d;
+        .brand-logo {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-weight: 800;
         }
 
-        .stats-value{
-            font-size:26px;
-            font-weight:800;
+        .nav-link-pro {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 10px;
+            transition: 0.2s;
+            margin-bottom: 4px;
         }
 
-        .nav-card{
-            border-radius:20px;
-            padding:20px;
-            background:#fff;
-            box-shadow:0 8px 25px rgba(0,0,0,.07);
-            transition:.2s;
-            text-decoration:none;
-            display:block;
-            color:black;
+        .nav-link-pro:hover, .nav-link-pro.active {
+            background: rgba(99, 102, 241, 0.08);
+            color: var(--accent);
         }
 
-        .nav-card:hover{
-            transform:translateY(-5px);
+        /* MAIN CONTENT */
+        .main-wrapper {
+            margin-left: 280px;
+            padding: 40px 60px;
+            transition: all 0.3s;
         }
 
-        .activity-box{
-            background:#fff;
-            border-radius:20px;
-            padding:20px;
-            box-shadow:0 8px 25px rgba(0,0,0,.06);
+        /* MOBILE HEADER */
+        .mobile-top-bar {
+            display: none;
+            background: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--card-border);
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1100;
         }
 
-        .logout-btn{
-            border-radius:12px;
+        /* CARDS */
+        .pro-card {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            height: 100%;
         }
 
+        .btn-pro {
+            background: var(--accent);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            border: none;
+        }
+
+        /* RESPONSIVE FIXES */
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-100%); /* Прячем меню */
+            }
+            .sidebar.active {
+                transform: translateX(0); /* Показываем при клике */
+            }
+            .main-wrapper {
+                margin-left: 0;
+                padding: 24px 20px;
+            }
+            .mobile-top-bar {
+                display: flex;
+            }
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 15px;
+            }
+            .btn-pro {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1040;
+        }
+        .overlay.active { display: block; }
     </style>
 </head>
 <body>
 
-<div class="container mt-5">
-    <div class="container-box">
+<div class="overlay" id="overlay"></div>
 
-        <!-- TOP -->
-        <div class="topbar">
-            <div>
-                <h3><b>Kimlik Dashboard</b></h3>
-                <small>Welcome, <span sec:authentication="name"></span></small>
-            </div>
-
-            <div class="d-flex align-items-center">
-
-                <a th:href="@{/employee/list}"
-                   sec:authorize="hasRole('Yonetici')"
-                   class="btn btn-success me-2"
-                   style="border-radius:12px; font-weight:600;">
-                    ➕ Add Employee
-                </a>
-
-                <form th:action="@{/logout}" method="post" class="m-0">
-                    <button class="btn btn-danger logout-btn">
-                        Logout
-                    </button>
-                </form>
-
-            </div>
-        </div>
-
-        <!-- STATS -->
-        <div class="row g-3 mb-4" sec:authorize="hasRole('Yonetici')">
-
-            <div class="col-md-4">
-                <div class="stats-card">
-                    <div class="stats-title">Clients</div>
-                    <div class="stats-value" th:text="${clientCount}">0</div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="stats-card">
-                    <div class="stats-title">Students</div>
-                    <div class="stats-value" th:text="${studentCount}">0</div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="stats-card">
-                    <div class="stats-title">Workers</div>
-                    <div class="stats-value" th:text="${workerCount}">0</div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- MODULES -->
-        <div class="row g-4 mb-4">
-
-            <div class="col-md-4" sec:authorize="hasRole('Kimlik')">
-                <a th:href="@{/kimlik/list}" class="nav-card">
-                    <h5>👤 Kimlik</h5>
-                    <p>Manage client kimlik</p>
-                </a>
-            </div>
-
-            <div class="col-md-4" sec:authorize="hasRole('StudentKimlik')">
-                <a th:href="@{/Student_kimlik/list}" class="nav-card">
-                    <h5>🎓 Student</h5>
-                    <p>Manage students</p>
-                </a>
-            </div>
-
-            <div class="col-md-4" sec:authorize="hasRole('VorkerKimlik')">
-                <a th:href="@{/VorkerKimlik/list}" class="nav-card">
-                    <h5>💼 Worker</h5>
-                    <p>Manage workers</p>
-                </a>
-            </div>
-
-        </div>
-
-        <!-- ACTIVITY -->
-        <div class="mt-4 p-4 bg-white rounded-4 shadow-sm" sec:authorize="hasRole('Yonetici')">
-            <h4 class="fw-bold mb-3">Recent Activity</h4>
-
-            <div th:if="${#lists.isEmpty(recentActivities)}" class="text-muted">
-                No recent activity yet.
-            </div>
-
-            <ul class="mb-0 ps-3" th:if="${!#lists.isEmpty(recentActivities)}">
-                <li th:each="a : ${recentActivities}" class="mb-2">
-                    <span th:text="${a.description}">Activity text</span>
-                    <span class="text-muted small"
-                          th:text="${' - ' + #temporals.format(a.createdAt, 'dd.MM.yyyy HH:mm')}">
-                time
-            </span>
-                </li>
-            </ul>
-            <a th:href="@{/RecentActivities}">More</a>
-        </div>
-
+<div class="mobile-top-bar">
+    <div class="d-flex align-items-center gap-2">
+        <div class="brand-logo" style="width: 24px; height: 24px; font-size: 12px;">K</div>
+        <span class="fw-bold">Kimlik Pro</span>
     </div>
+    <button class="btn border-0 fs-4" id="menuBtn">
+        <i class="fa-solid fa-bars"></i>
+    </button>
 </div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="brand-box">
+        <div class="brand-logo">K</div>
+        <span class="fw-bold fs-5">Kimlik Pro</span>
+    </div>
+
+    <a href="#" class="nav-link-pro active">
+        <i class="fa-solid fa-chart-pie"></i> Dashboard
+    </a>
+
+    <div sec:authorize="hasRole('Kimlik')">
+        <a th:href="@{/kimlik/list}" class="nav-link-pro">
+            <i class="fa-solid fa-address-book"></i> Clients
+        </a>
+    </div>
+
+    <div sec:authorize="hasRole('StudentKimlik')">
+        <a th:href="@{/Student_kimlik/list}" class="nav-link-pro">
+            <i class="fa-solid fa-graduation-cap"></i> Students
+        </a>
+    </div>
+
+    <div sec:authorize="hasRole('VorkerKimlik')">
+        <a th:href="@{/VorkerKimlik/list}" class="nav-link-pro">
+            <i class="fa-solid fa-user-gear"></i> Workers
+        </a>
+    </div>
+
+    <div class="mt-auto">
+        <form th:action="@{/logout}" method="post">
+            <button class="nav-link-pro bg-transparent border-0 w-100 text-start text-danger">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+            </button>
+        </form>
+    </div>
+</aside>
+
+<main class="main-wrapper">
+    <header class="d-flex justify-content-between align-items-end mb-4 header-content">
+        <div>
+            <h1 class="fw-800 m-0">Overview</h1>
+            <p class="text-muted small">Welcome, <span th:text="${#authentication.name}">Admin</span></p>
+        </div>
+        <div sec:authorize="hasRole('Yonetici')">
+            <a th:href="@{/employee/list}" class="btn-pro">
+                <i class="fa-solid fa-plus"></i> Add Employee
+            </a>
+        </div>
+    </header>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="pro-card">
+                <div class="text-muted small fw-600">Total Clients</div>
+                <div class="fs-2 fw-800" th:text="${clientCount}">0</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="pro-card">
+                <div class="text-muted small fw-600">Students</div>
+                <div class="fs-2 fw-800" th:text="${studentCount}">0</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="pro-card">
+                <div class="text-muted small fw-600">Workers</div>
+                <div class="fs-2 fw-800" th:text="${workerCount}">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pro-card" sec:authorize="hasRole('Yonetici')">
+        <h5 class="fw-bold mb-4">Recent Activity</h5>
+        <div th:if="${#lists.isEmpty(recentActivities)}" class="text-muted small">No recent logs</div>
+        <div th:each="a : ${recentActivities}" class="py-2 border-bottom d-flex justify-content-between">
+            <span class="small fw-500" th:text="${a.description}">Action</span>
+            <span class="text-muted small" th:text="${#temporals.format(a.createdAt, 'HH:mm')}"></span>
+        </div>
+        <br>
+        <a th:href="${'/RecentActivities'}">More</a>
+    </div>
+</main>
+
+<script>
+    const menuBtn = document.getElementById('menuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    function toggleMenu() {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', toggleMenu);
+</script>
 
 </body>
 </html>
