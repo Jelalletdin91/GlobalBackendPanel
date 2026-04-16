@@ -14,7 +14,7 @@ public class AppUser {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "username", nullable = false, unique = true)

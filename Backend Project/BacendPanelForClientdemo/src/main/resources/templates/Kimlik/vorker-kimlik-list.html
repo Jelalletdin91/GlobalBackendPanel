@@ -1,287 +1,446 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8">
-  <title>Worker Kimlik Directory</title>
+  <title>Kimlik Pro | Workers</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    :root{
-      --soft-bg:#f6f7fb;
-      --card-radius:16px;
-      --shadow:0 10px 28px rgba(0,0,0,.08);
+    :root {
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --sidebar-bg: #ffffff;
+      --body-bg: #f9fafb;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --card-border: rgba(229, 231, 235, 0.8);
     }
 
-    body{
-      background:var(--soft-bg);
+    body {
+      background-color: var(--body-bg);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--text-main);
+      margin: 0;
     }
 
-    .page-title{
-      font-weight:800;
-      letter-spacing:.2px;
+    .sidebar {
+      width: 280px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--card-border);
+      height: 100vh;
+      position: fixed;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      z-index: 1050;
+      transition: transform 0.3s ease;
     }
 
-    .card-shell{
-      border:0;
-      border-radius:var(--card-radius);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      background:#fff;
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 12px 32px;
     }
 
-    .muted{
-      color:#6c757d;
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 800;
     }
 
-    .badge-days{
-      font-weight:700;
-      padding:.45rem .65rem;
-      border-radius:999px;
+    .nav-link-pro {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      border-radius: 10px;
+      transition: 0.2s;
+      margin-bottom: 4px;
     }
 
-    .key{
-      font-size:.78rem;
-      color:#6c757d;
+    .nav-link-pro:hover, .nav-link-pro.active {
+      background: rgba(99, 102, 241, 0.08);
+      color: var(--accent);
     }
 
-    .val{
-      font-weight:600;
+    .main-wrapper {
+      margin-left: 280px;
+      padding: 40px 60px;
+      transition: all 0.3s;
     }
 
-    .btn-soft{
-      border-radius:12px;
-      padding:.55rem .9rem;
+    .mobile-top-bar {
+      display: none;
+      background: white;
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--card-border);
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1100;
     }
 
-    .truncate{
-      max-width:100%;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      display:block;
+    .pro-card {
+      background: #ffffff;
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      height: 100%;
     }
 
-    .top-actions{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
+    .btn-pro {
+      background: var(--accent);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      border: none;
+      transition: .2s;
     }
 
-    .home-link-pro{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:9px 14px;
-      border-radius:12px;
-      background:#ffffff;
-      border:1px solid #dee2e6;
-      color:#212529;
-      text-decoration:none;
-      font-weight:600;
-      box-shadow:0 4px 12px rgba(0,0,0,.04);
-      transition:all .22s ease;
+    .btn-pro:hover {
+      background: var(--accent-hover);
+      color: white;
     }
 
-    .home-link-pro:hover{
-      background:#0d6efd;
-      border-color:#0d6efd;
-      color:#fff;
-      transform:translateY(-1px);
+    .btn-outline-pro {
+      border: 1px solid var(--card-border);
+      background: white;
+      color: var(--text-main);
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .home-link-pro .icon{
-      font-size:16px;
-      line-height:1;
+    .search-input {
+      border-radius: 14px;
+      min-height: 48px;
+      border: 1px solid var(--card-border);
     }
 
-    .add-btn{
-      border-radius:12px;
-      padding:9px 16px;
-      font-weight:600;
-      box-shadow:0 6px 16px rgba(13,110,253,.18);
+    .search-input:focus {
+      box-shadow: 0 0 0 0.2rem rgba(99,102,241,.12);
+      border-color: rgba(99,102,241,.45);
     }
 
-    .search-box{
-      background:#fff;
-      border-radius:16px;
-      box-shadow:var(--shadow);
-      padding:16px;
-      margin-bottom:22px;
+    .person-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.3;
     }
 
-    .search-input{
-      border-radius:12px;
-      min-height:48px;
+    .muted {
+      color: var(--text-muted);
     }
 
-    .search-btn{
-      border-radius:12px;
-      min-height:48px;
-      font-weight:600;
+    .key {
+      font-size: .78rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
     }
 
-    .reset-btn{
-      border-radius:12px;
-      min-height:48px;
-      font-weight:600;
+    .val {
+      font-weight: 600;
+      color: var(--text-main);
     }
 
-    .result-info{
-      color:#6c757d;
-      font-size:.95rem;
-      margin-bottom:14px;
+    .truncate {
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+
+    .badge-days {
+      font-weight: 700;
+      padding: .45rem .7rem;
+      border-radius: 999px;
+      white-space: nowrap;
+      font-size: .85rem;
+    }
+
+    .badge-danger-pro {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .badge-warning-pro {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge-dark-pro {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn-soft {
+      border-radius: 12px;
+      padding: .60rem .9rem;
+      font-weight: 600;
+    }
+
+    .info-line {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 1040;
+    }
+
+    .overlay.active { display: block; }
+
+    @media (max-width: 991px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-wrapper {
+        margin-left: 0;
+        padding: 24px 20px;
+      }
+
+      .mobile-top-bar {
+        display: flex;
+      }
+
+      .header-content {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 15px;
+      }
+
+      .btn-pro {
+        width: 100%;
+        justify-content: center;
+      }
     }
   </style>
 </head>
-
 <body>
-<div class="container py-4">
 
-  <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-    <div>
-      <div class="text-muted small">Directory</div>
-      <h2 class="page-title mb-0">Worker Kimlik</h2>
-    </div>
+<div class="overlay" id="overlay"></div>
 
-    <div class="top-actions">
-      <a th:href="@{/}" class="home-link-pro">
-        <span class="icon">🏠</span>
-        <span>Dashboard</span>
-      </a>
+<div class="mobile-top-bar">
+  <div class="d-flex align-items-center gap-2">
+    <div class="brand-logo" style="width:24px;height:24px;font-size:12px;">K</div>
+    <span class="fw-bold">Kimlik Pro</span>
+  </div>
+  <button class="btn border-0 fs-4" id="menuBtn">
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</div>
 
-      <a th:href="@{/VorkerKimlik/showForm}" class="btn btn-primary add-btn">
-        + Add Worker
-      </a>
-    </div>
+<aside class="sidebar" id="sidebar">
+  <div class="brand-box">
+    <div class="brand-logo">K</div>
+    <span class="fw-bold fs-5">Kimlik Pro</span>
   </div>
 
-  <!-- SEARCH -->
-  <div class="search-box">
+  <a th:href="@{/}" class="nav-link-pro">
+    <i class="fa-solid fa-chart-pie"></i> Dashboard
+  </a>
+
+  <div sec:authorize="hasRole('Kimlik')">
+    <a th:href="@{/kimlik/list}" class="nav-link-pro">
+      <i class="fa-solid fa-address-book"></i> Clients
+    </a>
+  </div>
+
+  <div sec:authorize="hasRole('StudentKimlik')">
+    <a th:href="@{/Student_kimlik/list}" class="nav-link-pro">
+      <i class="fa-solid fa-graduation-cap"></i> Students
+    </a>
+  </div>
+
+  <div sec:authorize="hasRole('VorkerKimlik')">
+    <a th:href="@{/VorkerKimlik/list}" class="nav-link-pro active">
+      <i class="fa-solid fa-user-gear"></i> Workers
+    </a>
+  </div>
+
+  <div class="mt-auto">
+    <form th:action="@{/logout}" method="post">
+      <button class="nav-link-pro bg-transparent border-0 w-100 text-start text-danger">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+      </button>
+    </form>
+  </div>
+</aside>
+
+<main class="main-wrapper">
+  <header class="d-flex justify-content-between align-items-end mb-4 header-content">
+    <div>
+      <h1 class="fw-bold m-0">Workers</h1>
+      <p class="text-muted small mb-0">Manage all worker kimlik records</p>
+    </div>
+
+    <a th:href="@{/VorkerKimlik/showForm}" class="btn-pro">
+      <i class="fa-solid fa-plus"></i> Add Worker
+    </a>
+  </header>
+
+  <div class="pro-card mb-4">
     <form th:action="@{/VorkerKimlik/list}" method="get">
       <div class="row g-2">
-        <div class="col-12 col-md-8 col-lg-9">
+        <div class="col-12 col-lg-8">
           <input type="text"
                  name="keyword"
                  th:value="${keyword}"
                  class="form-control search-input"
-                 placeholder="Search by first name, last name, kimlik number, phone, email or workplace">
+                 placeholder="Search by name, kimlik number, phone, email or workplace">
         </div>
-
-        <div class="col-6 col-md-2 col-lg-1">
-          <button type="submit" class="btn btn-dark w-100 search-btn">
-            Search
+        <div class="col-6 col-lg-2">
+          <button type="submit" class="btn-pro w-100 justify-content-center">
+            <i class="fa-solid fa-magnifying-glass"></i> Search
           </button>
         </div>
-
-        <div class="col-6 col-md-2 col-lg-2">
-          <a th:href="@{/VorkerKimlik/list}"
-             class="btn btn-outline-secondary w-100 reset-btn d-flex align-items-center justify-content-center">
+        <div class="col-6 col-lg-2">
+          <a th:href="@{/VorkerKimlik/list}" class="btn-outline-pro w-100">
             Reset
           </a>
         </div>
       </div>
     </form>
+
+    <div class="info-line" th:if="${keyword != null and !#strings.isEmpty(keyword)}">
+      Search results for: <strong th:text="${keyword}">keyword</strong>
+    </div>
   </div>
 
-  <!-- SEARCH INFO -->
-  <div class="result-info" th:if="${keyword != null and !#strings.isEmpty(keyword)}">
-    Search results for:
-    <strong th:text="${keyword}">keyword</strong>
+  <div th:if="${#lists.isEmpty(vorkerKimliks)}" class="pro-card">
+    <div class="text-muted">No workers found.</div>
   </div>
 
-  <!-- EMPTY RESULT -->
-  <div th:if="${#lists.isEmpty(vorkerKimliks)}" class="alert alert-warning rounded-4 shadow-sm border-0">
-    No workers found.
-  </div>
-
-  <div class="row g-3">
-    <div class="col-12 col-md-6 col-lg-4 col-xxl-3" th:each="v : ${vorkerKimliks}">
-      <div class="card card-shell">
-        <div class="card-body">
-
-          <div class="d-flex justify-content-between align-items-start gap-2">
-            <div class="flex-grow-1">
-              <div class="fw-bold fs-5 truncate"
-                   th:text="${v.firstName + ' ' + v.lastName}"
-                   th:title="${v.firstName + ' ' + v.lastName}">
-                Worker Name
-              </div>
-
-              <div class="muted small truncate"
-                   th:text="${v.phoneNumber}"
-                   th:title="${v.phoneNumber}">
-                phone
-              </div>
+  <div class="row g-4" th:if="${!#lists.isEmpty(vorkerKimliks)}">
+    <div class="col-12 col-md-6 col-xl-4" th:each="v : ${vorkerKimliks}">
+      <div class="pro-card">
+        <div class="d-flex justify-content-between align-items-start gap-3">
+          <div class="flex-grow-1">
+            <div class="person-name truncate"
+                 th:text="${v.firstName + ' ' + v.lastName}"
+                 th:title="${v.firstName + ' ' + v.lastName}">
+              Worker Name
             </div>
 
-            <span class="badge-days"
-                  th:classappend="${v.daysLeft < 0} ? ' bg-danger text-white' : (${v.daysLeft <= 60} ? ' bg-warning text-dark' : ' bg-dark text-white')"
-                  th:text="${v.daysLeft + ' d'}">
-                            0 d
-                        </span>
-          </div>
+            <div class="muted small truncate mt-1"
+                 th:text="${v.phoneNumber}"
+                 th:title="${v.phoneNumber}">
+              phone
+            </div>
 
-          <hr class="my-3">
-
-          <div class="mb-2">
-            <div class="key">Email</div>
-            <div class="val truncate"
+            <div class="muted small truncate"
                  th:text="${v.email}"
                  th:title="${v.email}">
-              -
+              email
             </div>
           </div>
 
-          <div class="mb-2">
-            <div class="key">Kimlik Number</div>
-            <div class="val truncate"
-                 th:text="${v.kimlikNumber}"
-                 th:title="${v.kimlikNumber}">
-              -
-            </div>
+          <span class="badge-days"
+                th:classappend="${v.daysLeft < 0} ? 'badge-danger-pro' : (${v.daysLeft <= 60} ? 'badge-warning-pro' : 'badge-dark-pro')"
+                th:text="${v.daysLeft + ' d'}">
+                        0 d
+                    </span>
+        </div>
+
+        <hr class="my-3">
+
+        <div class="mb-3">
+          <div class="key">Kimlik Number</div>
+          <div class="val truncate"
+               th:text="${v.kimlikNumber}"
+               th:title="${v.kimlikNumber}">
+            -
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="key">Workplace</div>
+          <div class="val truncate"
+               th:text="${v.workplace}"
+               th:title="${v.workplace}">
+            -
+          </div>
+        </div>
+
+        <div class="row g-2">
+          <div class="col-6">
+            <div class="key">Start</div>
+            <div class="val" th:text="${v.kimlikStartDate}">-</div>
           </div>
 
-          <div class="mb-2">
-            <div class="key">Workplace</div>
-            <div class="val truncate"
-                 th:text="${v.workplace}"
-                 th:title="${v.workplace}">
-              -
-            </div>
+          <div class="col-6 text-end">
+            <div class="key">Expiry</div>
+            <div class="val" th:text="${v.kimlikEndDate}">-</div>
           </div>
+        </div>
 
-          <div class="row g-2">
-            <div class="col-6">
-              <div class="key">Start</div>
-              <div class="val" th:text="${v.kimlikStartDate}">-</div>
-            </div>
+        <div class="d-flex gap-2 mt-4">
+          <a th:href="@{/VorkerKimlik/showVorkerKimlikForUpdate(vorkerKimlikId=${v.id})}"
+             class="btn btn-outline-primary btn-soft btn-sm flex-fill">
+            Update
+          </a>
 
-            <div class="col-6 text-end">
-              <div class="key">Expiry</div>
-              <div class="val" th:text="${v.kimlikEndDate}">-</div>
-            </div>
-          </div>
-
-          <div class="d-flex gap-2 mt-3">
-            <a th:href="@{/VorkerKimlik/showVorkerKimlikForUpdate(vorkerKimlikId=${v.id})}"
-               class="btn btn-outline-primary btn-soft btn-sm flex-fill">
-              Update
-            </a>
-
-            <a th:href="@{/VorkerKimlik/delete(vorkerKimlikId=${v.id})}"
-               class="btn btn-outline-danger btn-soft btn-sm flex-fill"
-               onclick="return confirm('Are you sure you want to delete this worker?')">
-              Delete
-            </a>
-          </div>
-
+          <a th:href="@{/VorkerKimlik/delete(vorkerKimlikId=${v.id})}"
+             class="btn btn-outline-danger btn-soft btn-sm flex-fill"
+             onclick="return confirm('Are you sure you want to delete this worker?')">
+            Delete
+          </a>
         </div>
       </div>
     </div>
   </div>
+</main>
 
-</div>
+<script>
+  const menuBtn = document.getElementById('menuBtn');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+
+  function toggleMenu() {
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+  }
+
+  if (menuBtn) menuBtn.addEventListener('click', toggleMenu);
+  if (overlay) overlay.addEventListener('click', toggleMenu);
+</script>
+
 </body>
 </html>
