@@ -20,6 +20,9 @@
       --text-main: #111827;
       --text-muted: #6b7280;
       --card-border: rgba(229, 231, 235, 0.8);
+      --danger: #dc2626;
+      --warning: #f59e0b;
+      --dark-badge: #111827;
     }
 
     body {
@@ -103,6 +106,7 @@
       padding: 24px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.02);
       height: 100%;
+      overflow: hidden;
     }
 
     .btn-pro {
@@ -148,6 +152,12 @@
       border-color: rgba(99,102,241,.45);
     }
 
+    .info-line {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
     .person-name {
       font-size: 1.1rem;
       font-weight: 700;
@@ -177,12 +187,32 @@
       display: block;
     }
 
+    .top-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .top-info-left {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
     .badge-days {
-      font-weight: 700;
-      padding: .45rem .7rem;
+      flex: 0 0 auto;
+      min-width: 60px;
+      height: 36px;
+      padding: 0 12px;
       border-radius: 999px;
       white-space: nowrap;
-      font-size: .85rem;
+      font-size: .88rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      box-shadow: 0 4px 10px rgba(0,0,0,.06);
     }
 
     .badge-danger-pro {
@@ -204,12 +234,6 @@
       border-radius: 12px;
       padding: .60rem .9rem;
       font-weight: 600;
-    }
-
-    .info-line {
-      color: var(--text-muted);
-      font-size: 14px;
-      margin-top: 10px;
     }
 
     .overlay {
@@ -249,6 +273,15 @@
       .btn-pro {
         width: 100%;
         justify-content: center;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .badge-days {
+        min-width: 54px;
+        height: 34px;
+        font-size: .82rem;
+        padding: 0 10px;
       }
     }
   </style>
@@ -351,8 +384,9 @@
   <div class="row g-4" th:if="${!#lists.isEmpty(vorkerKimliks)}">
     <div class="col-12 col-md-6 col-xl-4" th:each="v : ${vorkerKimliks}">
       <div class="pro-card">
-        <div class="d-flex justify-content-between align-items-start gap-3">
-          <div class="flex-grow-1">
+
+        <div class="top-info">
+          <div class="top-info-left">
             <div class="person-name truncate"
                  th:text="${v.firstName + ' ' + v.lastName}"
                  th:title="${v.firstName + ' ' + v.lastName}">
@@ -375,8 +409,8 @@
           <span class="badge-days"
                 th:classappend="${v.daysLeft < 0} ? 'badge-danger-pro' : (${v.daysLeft <= 60} ? 'badge-warning-pro' : 'badge-dark-pro')"
                 th:text="${v.daysLeft + ' d'}">
-                        0 d
-                    </span>
+            0 d
+          </span>
         </div>
 
         <hr class="my-3">
@@ -423,6 +457,7 @@
             Delete
           </a>
         </div>
+
       </div>
     </div>
   </div>

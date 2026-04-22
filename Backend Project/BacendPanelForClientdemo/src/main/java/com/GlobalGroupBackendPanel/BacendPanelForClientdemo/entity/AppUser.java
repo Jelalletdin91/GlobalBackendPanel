@@ -68,6 +68,10 @@ public class AppUser {
         return roles;
     }
 
+    public void setId(Long id){
+        this.id=id;
+    }
+
     public void setName(String name) {
         this.name = name;
     }

@@ -80,6 +80,6 @@ public class VorkerKimlikServiceImpl implements VorkerKimlikService{
         String fullName = vorkerKimlik.getFirstName()+ " " + vorkerKimlik.getLastName();
         vorkerRepository.deleteById(theId);
 
-        activityLogService.save("DELETE", "WORKER", fullName, "Worker deleted: " + fullName);
+        activityLogService.save("DELETE", "WORKER", fullName, "Worker Deleted: " + fullName);
     }
 }

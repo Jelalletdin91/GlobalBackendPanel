@@ -4,24 +4,26 @@ import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.AppUser;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.Role;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.RoleRepository;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.UserRepository;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Service
-public class EmployeeServiceImpl implements EmployeeService{
+public class EmployeeServiceImpl implements EmployeeService {
 
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public EmployeeServiceImpl(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder){
-        this.passwordEncoder=passwordEncoder;
-        this.roleRepository=roleRepository;
-        this.userRepository=userRepository;
+    public EmployeeServiceImpl(RoleRepository roleRepository,
+                               UserRepository userRepository,
+                               PasswordEncoder passwordEncoder) {
+        this.roleRepository = roleRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -31,8 +33,8 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public AppUser findById(Long id) {
-
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
     }
 
     @Override
@@ -44,7 +46,30 @@ public class EmployeeServiceImpl implements EmployeeService{
             dbEmployee = findById(employee.getId());
         }
 
-        if (dbEmployee != null) {
+        if (dbEmployee == null) {
+            // CREATE
+            if (userRepository.findByUsername(employee.getUsername()).isPresent()) {
+                throw new RuntimeException("This username already exists. Please choose another username.");
+            }
+
+            if (employee.getPassword() == null || employee.getPassword().trim().isEmpty()) {
+                throw new RuntimeException("Password is required for new employee.");
+            }
+
+            employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+            employee.setEnabled(true);
+            employee.setRoles(buildRoles(kimlikRole, studentRole, workerRole));
+
+            userRepository.save(employee);
+
+        } else {
+            // UPDATE
+            AppUser existingByUsername = userRepository.findByUsername(employee.getUsername()).orElse(null);
+
+            if (existingByUsername != null && !existingByUsername.getId().equals(employee.getId())) {
+                throw new RuntimeException("This username already exists. Please choose another username.");
+            }
+
             dbEmployee.setName(employee.getName());
             dbEmployee.setUsername(employee.getUsername());
             dbEmployee.setEnabled(employee.isEnabled());
@@ -53,18 +78,9 @@ public class EmployeeServiceImpl implements EmployeeService{
                 dbEmployee.setPassword(passwordEncoder.encode(employee.getPassword()));
             }
 
-            Set<Role> roles = buildRoles(kimlikRole, studentRole, workerRole);
-            dbEmployee.setRoles(roles);
+            dbEmployee.setRoles(buildRoles(kimlikRole, studentRole, workerRole));
 
             userRepository.save(dbEmployee);
-        } else {
-            employee.setPassword(passwordEncoder.encode(employee.getPassword()));
-            employee.setEnabled(true);
-
-            Set<Role> roles = buildRoles(kimlikRole, studentRole, workerRole);
-            employee.setRoles(roles);
-
-            userRepository.save(employee);
         }
     }
 
@@ -91,19 +107,16 @@ public class EmployeeServiceImpl implements EmployeeService{
         }
 
         return roles;
-
     }
 
     @Override
     public void deleteById(Long id) {
-
         AppUser employee = findById(id);
 
-        if ("Nurmuhammet".equalsIgnoreCase(employee.getUsername())){
+        if ("Nurmuhammet".equalsIgnoreCase(employee.getUsername())) {
             throw new RuntimeException("Yonetici cannot be deleted");
-        }else {
-            userRepository.deleteById(id);
         }
 
+        userRepository.deleteById(id);
     }
 }

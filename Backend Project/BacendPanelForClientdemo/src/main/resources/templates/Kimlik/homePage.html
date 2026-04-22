@@ -223,19 +223,19 @@
     </header>
 
     <div class="row g-3 mb-4">
-        <div class="col-12 col-md-4">
-            <div class="pro-card">
+        <div class="col-12 col-md-4" sec:authorize="hasRole('Kimlik')">
+            <div class="pro-card" >
                 <div class="text-muted small fw-600">Total Clients</div>
                 <div class="fs-2 fw-800" th:text="${clientCount}">0</div>
             </div>
         </div>
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-4" sec:authorize="hasRole('StudentKimlik')">
             <div class="pro-card">
                 <div class="text-muted small fw-600">Students</div>
                 <div class="fs-2 fw-800" th:text="${studentCount}">0</div>
             </div>
         </div>
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-4" sec:authorize="hasRole('VorkerKimlik')">
             <div class="pro-card">
                 <div class="text-muted small fw-600">Workers</div>
                 <div class="fs-2 fw-800" th:text="${workerCount}">0</div>
