@@ -1,7 +1,7 @@
 package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.controller;
 
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.StudentKimlik;
-import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service.KimlikServiceImpl;
+
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service.StudentService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -37,7 +37,7 @@ public class StudentKimlikController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute("studentKimlik") StudentKimlik studentKimlik, Model model) {
-        studentKimlik.setNotified60days(false);
+        studentKimlik.setNotified60Days(false);
         try {
             studentService.save(studentKimlik);
             return "redirect:/Student_kimlik/list";

@@ -14,7 +14,7 @@ public class AppUser {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "username", nullable = false, unique = true)
@@ -25,6 +25,13 @@ public class AppUser {
 
     @Column(name = "enabled", nullable = false)
     private boolean enabled = true;
+
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private Company company;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -37,11 +44,12 @@ public class AppUser {
     public AppUser() {
     }
 
-    public AppUser(String name, String username, String password, boolean enabled) {
+    public AppUser(String name, String username, String password, boolean enabled, String email) {
         this.name = name;
         this.username = username;
         this.password = password;
         this.enabled = enabled;
+        this.email = email;
     }
 
     public Long getId() {
@@ -64,12 +72,16 @@ public class AppUser {
         return enabled;
     }
 
+    public Company getCompany() {
+        return company;
+    }
+
     public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setId(Long id){
-        this.id=id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setName(String name) {
@@ -88,7 +100,21 @@ public class AppUser {
         this.enabled = enabled;
     }
 
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+
 }

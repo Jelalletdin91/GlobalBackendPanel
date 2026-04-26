@@ -52,9 +52,14 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" th:field="*{email}" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
                     <label class="form-label">Password</label>
-                    <input type="text" th:field="*{password}" class="form-control"
-                           placeholder="Enter password for new employee or new password for update">
+                    <input type="password" th:field="*{password}" class="form-control"
+                           placeholder="For update: leave empty to keep old password">
                 </div>
 
                 <div class="mb-3">

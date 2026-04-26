@@ -28,30 +28,28 @@ public class DemoSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // Yonetici only in memory
+    // Only developer stays in memory
     @Bean
     public InMemoryUserDetailsManager inMemoryUserDetailsManager() {
-        UserDetails yonetici = User.builder()
-                .username("Nurmuhammet")
-                .password(passwordEncoder().encode("Rejepov96!"))
-                .roles("Yonetici", "EMPLOYEE", "Kimlik", "StudentKimlik", "VorkerKimlik")
+        UserDetails developer = User.builder()
+                .username("admin")
+                .password(passwordEncoder().encode("admin123"))
+                .roles("DEVELOPER")
                 .build();
 
-        return new InMemoryUserDetailsManager(yonetici);
+        return new InMemoryUserDetailsManager(developer);
     }
 
     @Bean
     public AuthenticationProvider inMemoryAuthenticationProvider() {
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(inMemoryUserDetailsManager());
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(inMemoryUserDetailsManager());
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
     @Bean
     public AuthenticationProvider databaseAuthenticationProvider() {
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(customUserDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(customUserDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
@@ -67,14 +65,42 @@ public class DemoSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .authenticationManager(authenticationManager())
                 .authorizeHttpRequests(configurer ->
                         configurer
-                                .requestMatchers("/loginPage", "/authenticateTheUser").permitAll()
-                                .requestMatchers("/").hasRole("EMPLOYEE")
-                                .requestMatchers("/employee/**").hasRole("Yonetici")
-                                .requestMatchers("/kimlik/**").hasRole("Kimlik")
-                                .requestMatchers("/Student_kimlik/**").hasRole("StudentKimlik")
-                                .requestMatchers("/VorkerKimlik/**").hasRole("VorkerKimlik")
+                                // public pages
+                                .requestMatchers(
+                                        "/loginPage",
+                                        "/authenticateTheUser",
+                                        "/company/register",
+                                        "/css/**",
+                                        "/js/**",
+                                        "/images/**"
+                                ).permitAll()
+
+                                // developer only
+                                .requestMatchers("/developer/**").hasRole("DEVELOPER")
+
+                                // company pages
+                                .requestMatchers("/company/**").hasAnyRole("YONETICI", "DEVELOPER")
+
+                                // employee management
+                                .requestMatchers("/employee/**").hasAnyRole("YONETICI", "DEVELOPER")
+
+                                // modules
+                                .requestMatchers("/kimlik/**").hasAnyRole("KIMLIK", "YONETICI", "DEVELOPER")
+                                .requestMatchers("/Student_kimlik/**").hasAnyRole("STUDENT_KIMLIK", "YONETICI", "DEVELOPER")
+                                .requestMatchers("/VorkerKimlik/**").hasAnyRole("VORKER_KIMLIK", "YONETICI", "DEVELOPER")
+
+                                // home page
+                                .requestMatchers("/").hasAnyRole(
+                                        "DEVELOPER",
+                                        "YONETICI",
+                                        "KIMLIK",
+                                        "STUDENT_KIMLIK",
+                                        "VORKER_KIMLIK"
+                                )
+
                                 .anyRequest().authenticated()
                 )
                 .formLogin(form ->

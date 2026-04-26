@@ -1,5 +1,6 @@
 package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service;
 
+import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.AppUser;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.Kimlik;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.KimlikRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,60 +12,91 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class KimlikServiceImpl implements KimlikerService{
+public class KimlikServiceImpl implements KimlikerService {
 
-    private KimlikRepository kimlikRepository;
+    private final KimlikRepository kimlikRepository;
     private final ActivityLogService activityLogService;
+    private final CurrentUserService currentUserService;
 
     @Autowired
-    public KimlikServiceImpl(KimlikRepository theKimlikRepository, ActivityLogService activityLogService){
-        kimlikRepository=theKimlikRepository;
-        this.activityLogService=activityLogService;
+    public KimlikServiceImpl(KimlikRepository kimlikRepository,
+                             ActivityLogService activityLogService,
+                             CurrentUserService currentUserService) {
+        this.kimlikRepository = kimlikRepository;
+        this.activityLogService = activityLogService;
+        this.currentUserService = currentUserService;
     }
 
-
+    // ✅ ВСЕ ДАННЫЕ ТОЛЬКО СВОЕЙ КОМПАНИИ
     @Override
     public List<Kimlik> findAll() {
+        AppUser currentUser = currentUserService.getCurrentUser();
 
+        if (currentUser.getCompany() == null) {
+            throw new RuntimeException("User has no company");
+        }
 
-        return kimlikRepository.findAllByOrderByKimlikEndDateAsc();
-
+        return kimlikRepository.findByCompanyIdOrderByKimlikEndDateAsc(
+                currentUser.getCompany().getId()
+        );
     }
 
+    // ✅ SEARCH С ИЗОЛЯЦИЕЙ
     @Override
     public List<Kimlik> search(String keyword) {
-        if (keyword == null || keyword.trim().isEmpty()){
-            return kimlikRepository.findAllByOrderByKimlikEndDateAsc();
-        }else {
-            return kimlikRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrKimlikNumberContainingIgnoreCaseOrPhoneNumberContainingIgnoreCaseOrEmailContainingIgnoreCaseOrderByKimlikEndDateAsc(keyword, keyword, keyword, keyword, keyword);
+        AppUser currentUser = currentUserService.getCurrentUser();
+
+        if (currentUser.getCompany() == null) {
+            throw new RuntimeException("User has no company");
         }
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return kimlikRepository.findByCompanyIdOrderByKimlikEndDateAsc(
+                    currentUser.getCompany().getId()
+            );
+        }
+
+        return kimlikRepository.searchByCompanyIdAndKeyword(
+                currentUser.getCompany().getId(),
+                keyword
+        );
     }
 
+    // ✅ ЗАЩИТА ОТ ЧУЖИХ ID
     @Override
     public Kimlik findById(Long theId) {
+        AppUser currentUser = currentUserService.getCurrentUser();
 
-        Optional<Kimlik> result = kimlikRepository.findById(theId);
+        Kimlik kimlik = kimlikRepository.findById(theId)
+                .orElseThrow(() -> new RuntimeException("Kimlik not found"));
 
-        Kimlik kimlik = null;
-
-        if (result.isPresent()){
-            kimlik = result.get();
-        }else {
-            throw new RuntimeException("Did not find!");
+        if (kimlik.getCompany() == null ||
+                currentUser.getCompany() == null ||
+                !kimlik.getCompany().getId().equals(currentUser.getCompany().getId())) {
+            throw new RuntimeException("ACCESS DENIED");
         }
-
-
 
         return kimlik;
     }
 
+    // ✅ SAVE С ПРИВЯЗКОЙ К КОМПАНИИ
     @Override
     public Kimlik save(Kimlik kimlik) {
+
+        AppUser currentUser = currentUserService.getCurrentUser();
+
+        if (currentUser.getCompany() == null) {
+            throw new RuntimeException("User has no company");
+        }
 
         boolean isNew = (kimlik.getId() == null);
 
         if (isNew) {
+            kimlik.setCompany(currentUser.getCompany());
             kimlik.setNotified60Days(false);
+        } else {
+            Kimlik existing = findById(kimlik.getId());
+            kimlik.setCompany(existing.getCompany());
         }
 
         Kimlik savedKimlik = kimlikRepository.save(kimlik);
@@ -80,17 +112,16 @@ public class KimlikServiceImpl implements KimlikerService{
         return savedKimlik;
     }
 
+    // ✅ DELETE С ПРОВЕРКОЙ
     @Override
     public void deleteById(Long theId) {
 
-        Kimlik kimlik = findById(theId);
+        Kimlik kimlik = findById(theId); // 🔥 уже проверяет компанию
 
         String fullName = kimlik.getFirstName() + " " + kimlik.getLastName();
+
         kimlikRepository.deleteById(theId);
 
         activityLogService.save("DELETE", "KIMLIK", fullName, "Client Deleted: " + fullName);
     }
-
-
-
 }

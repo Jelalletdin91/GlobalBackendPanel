@@ -13,10 +13,10 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
-    public void sendCompanyAlert(String text){
+    public void sendCompanyAlert(String toEmail, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("jelilberjanow83@gmail.com");
-        message.setTo("jelalletdinberjanow797@gmail.com");
+        message.setTo(toEmail);
         message.setSubject("Kimlik bitiyor");
         message.setText(text);
         mailSender.send(message);

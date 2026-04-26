@@ -30,6 +30,9 @@ public class EmployeeController {
     public String showForm(Model model){
         AppUser appUser = new AppUser();
         model.addAttribute("employee", appUser);
+        model.addAttribute("kimlikRole", false);
+        model.addAttribute("studentRole", false);
+        model.addAttribute("workerRole", false);
         return "Kimlik/employee-form";
     }
 
@@ -45,8 +48,9 @@ public class EmployeeController {
             return "redirect:/employee/list";
 
         } catch (DataIntegrityViolationException ex) {
+            employee.setPassword("");
             model.addAttribute("employee", employee);
-            model.addAttribute("errorMessage", "This username already exists. Please choose another username.");
+            model.addAttribute("errorMessage", "This username or email already exists.");
 
             model.addAttribute("kimlikRole", kimlikRole);
             model.addAttribute("studentRole", studentRole);
@@ -55,6 +59,7 @@ public class EmployeeController {
             return "Kimlik/employee-form";
 
         } catch (RuntimeException ex) {
+            employee.setPassword("");
             model.addAttribute("employee", employee);
             model.addAttribute("errorMessage", ex.getMessage());
 
@@ -73,15 +78,15 @@ public class EmployeeController {
         employee.setPassword("");
 
         model.addAttribute("employee", employee);
-        model.addAttribute("kimlikRole", employee.getRoles().stream().anyMatch(r -> r.getName().equals("Kimlik")));
-        model.addAttribute("studentRole", employee.getRoles().stream().anyMatch(r -> r.getName().equals("StudentKimlik")));
-        model.addAttribute("workerRole", employee.getRoles().stream().anyMatch(r -> r.getName().equals("VorkerKimlik")));
+        model.addAttribute("kimlikRole", employee.getRoles().stream().anyMatch(r -> r.getName().equals("KIMLIK")));
+        model.addAttribute("studentRole", employee.getRoles().stream().anyMatch(r -> r.getName().equals("STUDENT_KIMLIK")));
+        model.addAttribute("workerRole", employee.getRoles().stream().anyMatch(r -> r.getName().equals("VORKER_KIMLIK")));
 
         return "Kimlik/employee-form";
     }
 
     @GetMapping("/delete")
-    public String deleteById(@RequestParam("employeeId") Long id, Model model){
+    public String deleteById(@RequestParam("employeeId") Long id){
         employeeService.deleteById(id);
         return "redirect:/employee/list";
     }

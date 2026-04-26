@@ -4,8 +4,8 @@ import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.AppUser;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.Role;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.RoleRepository;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.UserRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,28 +17,76 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CurrentUserService currentUserService;
 
     public EmployeeServiceImpl(RoleRepository roleRepository,
                                UserRepository userRepository,
-                               PasswordEncoder passwordEncoder) {
+                               PasswordEncoder passwordEncoder,
+                               CurrentUserService currentUserService) {
+        this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.currentUserService = currentUserService;
     }
 
     @Override
     public List<AppUser> findAllEmployee() {
-        return userRepository.findAll();
+        AppUser currentUser = currentUserService.getCurrentUser();
+
+        // Developer sees all users
+        boolean isDeveloper = currentUser.getRoles().stream()
+                .anyMatch(r -> r.getName().equals("DEVELOPER"));
+
+        if (isDeveloper) {
+            return userRepository.findAll();
+        }
+
+        // Yonetici sees only users from own company
+        if (currentUser.getCompany() == null) {
+            throw new RuntimeException("Current user has no company");
+        }
+
+        return userRepository.findByCompanyId(currentUser.getCompany().getId());
     }
 
     @Override
     public AppUser findById(Long id) {
-        return userRepository.findById(id)
+        AppUser currentUser = currentUserService.getCurrentUser();
+
+        AppUser employee = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        boolean isDeveloper = currentUser.getRoles().stream()
+                .anyMatch(r -> r.getName().equals("DEVELOPER"));
+
+        if (isDeveloper) {
+            return employee;
+        }
+
+        if (currentUser.getCompany() == null ||
+                employee.getCompany() == null ||
+                !employee.getCompany().getId().equals(currentUser.getCompany().getId())) {
+            throw new RuntimeException("ACCESS DENIED");
+        }
+
+        return employee;
     }
 
     @Override
     public void save(AppUser employee, boolean kimlikRole, boolean studentRole, boolean workerRole) {
+
+        AppUser currentUser = currentUserService.getCurrentUser();
+
+        boolean isDeveloper = currentUser.getRoles().stream()
+                .anyMatch(r -> r.getName().equals("DEVELOPER"));
+
+        var existingEmail = userRepository.findByEmail(employee.getEmail());
+
+        if (existingEmail.isPresent()) {
+            if (employee.getId() == null || !existingEmail.get().getId().equals(employee.getId())) {
+                throw new RuntimeException("This email already exists. Please choose another email.");
+            }
+        }
 
         AppUser dbEmployee = null;
 
@@ -46,64 +94,65 @@ public class EmployeeServiceImpl implements EmployeeService {
             dbEmployee = findById(employee.getId());
         }
 
-        if (dbEmployee == null) {
-            // CREATE
-            if (userRepository.findByUsername(employee.getUsername()).isPresent()) {
-                throw new RuntimeException("This username already exists. Please choose another username.");
-            }
-
-            if (employee.getPassword() == null || employee.getPassword().trim().isEmpty()) {
-                throw new RuntimeException("Password is required for new employee.");
-            }
-
-            employee.setPassword(passwordEncoder.encode(employee.getPassword()));
-            employee.setEnabled(true);
-            employee.setRoles(buildRoles(kimlikRole, studentRole, workerRole));
-
-            userRepository.save(employee);
-
-        } else {
-            // UPDATE
-            AppUser existingByUsername = userRepository.findByUsername(employee.getUsername()).orElse(null);
-
-            if (existingByUsername != null && !existingByUsername.getId().equals(employee.getId())) {
-                throw new RuntimeException("This username already exists. Please choose another username.");
-            }
-
+        if (dbEmployee != null) {
             dbEmployee.setName(employee.getName());
             dbEmployee.setUsername(employee.getUsername());
+            dbEmployee.setEmail(employee.getEmail());
             dbEmployee.setEnabled(employee.isEnabled());
 
             if (employee.getPassword() != null && !employee.getPassword().trim().isEmpty()) {
                 dbEmployee.setPassword(passwordEncoder.encode(employee.getPassword()));
             }
 
-            dbEmployee.setRoles(buildRoles(kimlikRole, studentRole, workerRole));
+            Set<Role> roles = buildRoles(kimlikRole, studentRole, workerRole);
+            dbEmployee.setRoles(roles);
+
+            // Developer can preserve existing company; Yonetici cannot move company
+            if (!isDeveloper) {
+                dbEmployee.setCompany(currentUser.getCompany());
+            }
 
             userRepository.save(dbEmployee);
+
+        } else {
+            employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+            employee.setEnabled(true);
+
+            Set<Role> roles = buildRoles(kimlikRole, studentRole, workerRole);
+            employee.setRoles(roles);
+
+            // 🔥 auto company assignment
+            if (!isDeveloper) {
+                if (currentUser.getCompany() == null) {
+                    throw new RuntimeException("Current user has no company");
+                }
+                employee.setCompany(currentUser.getCompany());
+            }
+
+            userRepository.save(employee);
         }
     }
 
     private Set<Role> buildRoles(boolean kimlikRole, boolean studentRole, boolean workerRole) {
         Set<Role> roles = new HashSet<>();
 
-        Role employeeRole = roleRepository.findByName("EMPLOYEE")
-                .orElseThrow(() -> new RuntimeException("EMPLOYEE role not found"));
-        roles.add(employeeRole);
-
         if (kimlikRole) {
-            roles.add(roleRepository.findByName("Kimlik")
-                    .orElseThrow(() -> new RuntimeException("Kimlik role not found")));
+            roles.add(roleRepository.findByName("KIMLIK")
+                    .orElseThrow(() -> new RuntimeException("KIMLIK role not found")));
         }
 
         if (studentRole) {
-            roles.add(roleRepository.findByName("StudentKimlik")
-                    .orElseThrow(() -> new RuntimeException("StudentKimlik role not found")));
+            roles.add(roleRepository.findByName("STUDENT_KIMLIK")
+                    .orElseThrow(() -> new RuntimeException("STUDENT_KIMLIK role not found")));
         }
 
         if (workerRole) {
-            roles.add(roleRepository.findByName("VorkerKimlik")
-                    .orElseThrow(() -> new RuntimeException("VorkerKimlik role not found")));
+            roles.add(roleRepository.findByName("VORKER_KIMLIK")
+                    .orElseThrow(() -> new RuntimeException("VORKER_KIMLIK role not found")));
+        }
+
+        if (roles.isEmpty()) {
+            throw new RuntimeException("At least one role must be selected");
         }
 
         return roles;
@@ -111,10 +160,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void deleteById(Long id) {
+        AppUser currentUser = currentUserService.getCurrentUser();
         AppUser employee = findById(id);
 
-        if ("Nurmuhammet".equalsIgnoreCase(employee.getUsername())) {
-            throw new RuntimeException("Yonetici cannot be deleted");
+        boolean isDeveloper = currentUser.getRoles().stream()
+                .anyMatch(r -> r.getName().equals("DEVELOPER"));
+
+        if ("admin".equalsIgnoreCase(employee.getUsername())) {
+            throw new RuntimeException("Developer cannot be deleted");
+        }
+
+        // Yonetici cannot delete himself
+        if (!isDeveloper && currentUser.getId().equals(employee.getId())) {
+            throw new RuntimeException("You cannot delete yourself");
         }
 
         userRepository.deleteById(id);

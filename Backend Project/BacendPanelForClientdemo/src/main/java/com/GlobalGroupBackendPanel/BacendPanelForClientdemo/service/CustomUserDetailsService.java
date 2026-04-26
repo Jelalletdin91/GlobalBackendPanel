@@ -3,6 +3,7 @@ package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.AppUser;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.Role;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.UserRepository;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
@@ -26,22 +27,25 @@ public class CustomUserDetailsService implements UserDetailsService {
         AppUser appUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        return new org.springframework.security.core.userdetails.User(
-                appUser.getUsername(),
-                appUser.getPassword(),
-                appUser.isEnabled(),
-                true,
-                true,
-                true,
-                mapRolesToAuthorities(appUser)
-        );
+        if(appUser.getCompany() == null && appUser.getCompany().isActive()){
+            throw new DisabledException("Company is disabled");
+        }
+
+        return User.builder()
+                .username(appUser.getUsername())
+                .password(appUser.getPassword())
+                .disabled(!appUser.isEnabled())
+                .authorities(mapRolesToAuthorities(appUser))
+                .build();
     }
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(AppUser appUser) {
         return appUser.getRoles()
                 .stream()
                 .map(Role::getName)
-                .map(roleName -> new SimpleGrantedAuthority("ROLE_" + roleName))
-                .collect(Collectors.toList());
+                .map(roleName -> roleName.startsWith("ROLE_")
+                        ? new SimpleGrantedAuthority(roleName)
+                        : new SimpleGrantedAuthority("ROLE_" + roleName))
+                .collect(Collectors.toSet());
     }
 }

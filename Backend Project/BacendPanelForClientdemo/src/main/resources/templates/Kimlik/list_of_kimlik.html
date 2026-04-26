@@ -310,19 +310,19 @@
     <i class="fa-solid fa-chart-pie"></i> Dashboard
   </a>
 
-  <div sec:authorize="hasRole('Kimlik')">
+  <div sec:authorize="hasAnyRole('KIMLIK', 'YONETICI', 'DEVELOPER')">
     <a th:href="@{/kimlik/list}" class="nav-link-pro active">
       <i class="fa-solid fa-address-book"></i> Clients
     </a>
   </div>
 
-  <div sec:authorize="hasRole('StudentKimlik')">
+  <div sec:authorize="hasAnyRole('STUDENT_KIMLIK', 'YONETICI', 'DEVELOPER')">
     <a th:href="@{/Student_kimlik/list}" class="nav-link-pro">
       <i class="fa-solid fa-graduation-cap"></i> Students
     </a>
   </div>
 
-  <div sec:authorize="hasRole('VorkerKimlik')">
+  <div sec:authorize="hasAnyRole('VORKER_KIMLIK', 'YONETICI', 'DEVELOPER')">
     <a th:href="@{/VorkerKimlik/list}" class="nav-link-pro">
       <i class="fa-solid fa-user-gear"></i> Workers
     </a>

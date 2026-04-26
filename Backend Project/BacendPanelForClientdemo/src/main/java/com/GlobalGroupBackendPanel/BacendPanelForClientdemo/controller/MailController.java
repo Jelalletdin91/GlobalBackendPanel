@@ -17,7 +17,12 @@ public class MailController {
 
     @GetMapping("/mail/test")
     public String testMail() {
-        emailService.sendCompanyAlert("TEST " + LocalDateTime.now());
+
+        emailService.sendCompanyAlert(
+                "jelalletdinberjanow797@gmail.com",
+                "TEST " + LocalDateTime.now()
+        );
+
         return "Mail sent";
     }
 }

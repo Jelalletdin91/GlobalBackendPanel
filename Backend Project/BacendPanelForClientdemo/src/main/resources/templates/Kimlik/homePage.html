@@ -182,19 +182,19 @@
         <i class="fa-solid fa-chart-pie"></i> Dashboard
     </a>
 
-    <div sec:authorize="hasRole('Kimlik')">
+    <div sec:authorize="hasAnyRole('KIMLIK', 'YONETICI', 'DEVELOPER')">
         <a th:href="@{/kimlik/list}" class="nav-link-pro">
             <i class="fa-solid fa-address-book"></i> Clients
         </a>
     </div>
 
-    <div sec:authorize="hasRole('StudentKimlik')">
+    <div sec:authorize="hasAnyRole('STUDENT_KIMLIK', 'YONETICI' , 'DEVELOPER')">
         <a th:href="@{/Student_kimlik/list}" class="nav-link-pro">
             <i class="fa-solid fa-graduation-cap"></i> Students
         </a>
     </div>
 
-    <div sec:authorize="hasRole('VorkerKimlik')">
+    <div sec:authorize="hasAnyRole('VORKER_KIMLIK', 'YONETICI', 'DEVELOPER')">
         <a th:href="@{/VorkerKimlik/list}" class="nav-link-pro">
             <i class="fa-solid fa-user-gear"></i> Workers
         </a>
@@ -215,7 +215,7 @@
             <h1 class="fw-800 m-0">Overview</h1>
             <p class="text-muted small">Welcome, <span th:text="${#authentication.name}">Admin</span></p>
         </div>
-        <div sec:authorize="hasRole('Yonetici')">
+        <div sec:authorize="hasAnyRole('YONETICI', 'DEVELOPER')">
             <a th:href="@{/employee/list}" class="btn-pro">
                 <i class="fa-solid fa-plus"></i> Add Employee
             </a>
@@ -223,19 +223,19 @@
     </header>
 
     <div class="row g-3 mb-4">
-        <div class="col-12 col-md-4" sec:authorize="hasRole('Kimlik')">
+        <div class="col-12 col-md-4" sec:authorize="hasAnyRole('KIMLIK', 'YONETICI', 'DEVELOPER')">
             <div class="pro-card" >
                 <div class="text-muted small fw-600">Total Clients</div>
                 <div class="fs-2 fw-800" th:text="${clientCount}">0</div>
             </div>
         </div>
-        <div class="col-12 col-md-4" sec:authorize="hasRole('StudentKimlik')">
+        <div class="col-12 col-md-4" sec:authorize="hasAnyRole('STUDENT_KIMLIK', 'YONETICI', 'DEVELOPER')">
             <div class="pro-card">
                 <div class="text-muted small fw-600">Students</div>
                 <div class="fs-2 fw-800" th:text="${studentCount}">0</div>
             </div>
         </div>
-        <div class="col-12 col-md-4" sec:authorize="hasRole('VorkerKimlik')">
+        <div class="col-12 col-md-4" sec:authorize="hasAnyRole('VORKER_KIMLIK', 'YONETICI', 'DEVELOPER')">
             <div class="pro-card">
                 <div class="text-muted small fw-600">Workers</div>
                 <div class="fs-2 fw-800" th:text="${workerCount}">0</div>
@@ -243,7 +243,7 @@
         </div>
     </div>
 
-    <div class="pro-card" sec:authorize="hasRole('Yonetici')">
+    <div class="pro-card" sec:authorize="hasAnyRole('YONETICI', 'DEVELOPER')">
         <h5 class="fw-bold mb-4">Recent Activity</h5>
         <div th:if="${#lists.isEmpty(recentActivities)}" class="text-muted small">No recent logs</div>
         <div th:each="a : ${recentActivities}" class="py-2 border-bottom d-flex justify-content-between">

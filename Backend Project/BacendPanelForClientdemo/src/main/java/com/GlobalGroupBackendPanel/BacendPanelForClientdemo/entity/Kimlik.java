@@ -39,6 +39,14 @@ public class Kimlik {
     @Column(name="notified_60_days", nullable = false)
     private boolean notified60Days;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private Company company;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private AppUser user;
+
     @Transient
     public long getDaysLeft() {
         if (kimlikEndDate == null) {
@@ -123,6 +131,14 @@ public class Kimlik {
 
     public void setKimlikEndDate(LocalDate kimlikEndDay) {
         this.kimlikEndDate = kimlikEndDay;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public boolean isNotified60Days() {

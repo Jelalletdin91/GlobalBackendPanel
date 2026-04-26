@@ -9,5 +9,7 @@ public interface ActivityLogRepository extends JpaRepository<ActivityLog, Long> 
 
     List<ActivityLog> findAllByOrderByCreatedAtDesc();
 
-    List<ActivityLog> findTop5ByOrderByCreatedAtDesc();
+    List<ActivityLog> findTop5ByCompanyIdOrderByCreatedAtDesc(Long companyId);
+
+    List<ActivityLog> findByCompanyIdOrderByCreatedAtDesc(Long companyId);
 }
