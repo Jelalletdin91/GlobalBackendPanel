@@ -69,21 +69,19 @@
                     <td>
                         <span th:each="r : ${e.roles}" class="badge bg-light text-dark me-1 mb-1" th:text="${r.name}">Role</span>
                     </td>
-                    <td class="text-end">
-                        <a th:if="${e.username != 'Nurmuhammet'}"
-                           th:href="@{/employee/showFormForUpdate(employeeId=${e.id})}"
-                           class="btn btn-outline-primary btn-sm">
-                            Update
-                        </a>
+                    <td>
+    <span th:if="${tempEmployee.roles.?[name == 'YONETICI'].size() > 0}">
+        Protected
+    </span>
 
-                        <a th:if="${e.username != 'Nurmuhammet'}"
-                           th:href="@{/employee/delete(employeeId=${e.id})}"
-                           class="btn btn-outline-danger btn-sm"
-                           onclick="return confirm('Delete this employee?')">
-                            Delete
-                        </a>
+                        <span th:if="${tempEmployee.roles.?[name == 'YONETICI'].size() == 0}">
+        <a th:href="@{/employee/showFormForUpdate(employeeId=${tempEmployee.id})}"
+           class="btn btn-sm btn-outline-primary">Update</a>
 
-                        <span th:if="${e.username == 'Nurmuhammet'}" class="text-muted small">Protected</span>
+        <a th:href="@{/employee/delete(employeeId=${tempEmployee.id})}"
+           class="btn btn-sm btn-outline-danger"
+           onclick="return confirm('Are you sure?')">Delete</a>
+    </span>
                     </td>
                 </tr>
                 </tbody>

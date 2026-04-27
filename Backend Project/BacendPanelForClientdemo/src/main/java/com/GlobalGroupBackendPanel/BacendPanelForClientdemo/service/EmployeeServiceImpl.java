@@ -163,15 +163,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         AppUser currentUser = currentUserService.getCurrentUser();
         AppUser employee = findById(id);
 
-        boolean isDeveloper = currentUser.getRoles().stream()
-                .anyMatch(r -> r.getName().equals("DEVELOPER"));
+        boolean employeeIsYonetici = employee.getRoles().stream().anyMatch(r -> r.getName().equals("YONETICI"));
 
-        if ("admin".equalsIgnoreCase(employee.getUsername())) {
-            throw new RuntimeException("Developer cannot be deleted");
+        if (employeeIsYonetici) {
+            throw new RuntimeException("YONETICI cannot be deleted");
         }
 
-        // Yonetici cannot delete himself
-        if (!isDeveloper && currentUser.getId().equals(employee.getId())) {
+        if (currentUser.getId().equals(employee.getId())) {
             throw new RuntimeException("You cannot delete yourself");
         }
 
