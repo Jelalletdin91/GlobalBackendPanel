@@ -1,135 +1,424 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Portal | Create Company</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Kimlik Pro | Company Registration</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #f4f7fb;
+            --card: #ffffff;
+            --text: #111827;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --shadow: 0 24px 60px rgba(15, 23, 42, 0.10);
+        }
+
         body {
-            font-family: 'Outfit', sans-serif;
-            background: #f4e8de; /* Soft warm background like the image */
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background:
+                    radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 30%),
+                    radial-gradient(circle at bottom right, rgba(22, 163, 74, 0.08), transparent 28%),
+                    var(--bg);
+            color: var(--text);
+        }
+
+        .page {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 32px;
         }
-        .main-container {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.08);
-        }
-        .blue-panel {
-            background: #3b44f6; /* Vibrant Royal Blue */
-            position: relative;
+
+        .shell {
+            width: 100%;
+            max-width: 1120px;
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 28px;
             overflow: hidden;
+            box-shadow: var(--shadow);
         }
-        /* Glass spheres in background */
-        .sphere {
-            position: absolute;
+
+        .info {
+            background: linear-gradient(160deg, #111827, #1e3a8a);
+            color: white;
+            padding: 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 680px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 20px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #ffffff;
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+        }
+
+        .info-main h1 {
+            font-size: 44px;
+            line-height: 1.08;
+            letter-spacing: -0.04em;
+            margin-bottom: 18px;
+        }
+
+        .info-main p {
+            color: rgba(255,255,255,0.72);
+            line-height: 1.75;
+            font-size: 15px;
+            max-width: 420px;
+        }
+
+        .features {
+            display: grid;
+            gap: 14px;
+            margin-top: 34px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            color: rgba(255,255,255,0.82);
+            font-size: 14px;
+        }
+
+        .check {
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.14);
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
         }
-        .input-pill {
-            background: white;
-            border: 1.5px solid #d1d5db;
-            transition: all 0.2s ease;
+
+        .info-footer {
+            color: rgba(255,255,255,0.55);
+            font-size: 13px;
+            line-height: 1.6;
         }
-        .input-pill:focus {
-            border-color: #3b44f6;
+
+        .form-side {
+            padding: 48px;
+        }
+
+        .form-head {
+            margin-bottom: 30px;
+        }
+
+        .tag {
+            display: inline-flex;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .form-head h2 {
+            font-size: 32px;
+            letter-spacing: -0.03em;
+            margin-bottom: 10px;
+        }
+
+        .form-head p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .error-box {
+            background: #fef2f2;
+            color: var(--danger);
+            border: 1px solid #fecaca;
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: grid;
+            gap: 18px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .field {
+            display: grid;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        input,
+        select {
+            height: 48px;
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 0 14px;
+            font-family: inherit;
+            font-size: 14px;
             outline: none;
-            box-shadow: 0 0 0 4px rgba(59, 68, 246, 0.1);
+            transition: 0.2s;
+            background: white;
         }
-        .avatar-glow {
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+        }
+
+        .optional {
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .submit {
+            margin-top: 8px;
+            height: 52px;
+            border: none;
+            border-radius: 16px;
+            background: var(--primary);
+            color: white;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .submit:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .note {
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .login-link {
+            margin-top: 18px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        @media (max-width: 900px) {
+            .shell {
+                grid-template-columns: 1fr;
+            }
+
+            .info {
+                min-height: auto;
+                padding: 34px;
+            }
+
+            .info-main {
+                margin-top: 42px;
+            }
+
+            .info-main h1 {
+                font-size: 34px;
+            }
+
+            .form-side {
+                padding: 34px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .page {
+                padding: 14px;
+            }
+
+            .shell {
+                border-radius: 20px;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .form-side,
+            .info {
+                padding: 26px;
+            }
         }
     </style>
 </head>
-<body class="p-4">
 
-<div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 main-container rounded-[3rem] overflow-hidden">
+<body>
+<div class="page">
+    <div class="shell">
 
-    <div class="blue-panel p-12 text-white flex flex-col items-center text-center justify-center space-y-8">
-        <div class="sphere w-32 h-32 -top-10 -left-10"></div>
-        <div class="sphere w-20 h-20 bottom-10 right-10"></div>
+        <section class="info">
+            <div class="brand">
+                <div class="brand-icon">K</div>
+                <span>Kimlik Pro</span>
+            </div>
 
-        <div class="w-20 h-20 bg-white/20 backdrop-blur-xl rounded-3xl flex items-center justify-center shadow-2xl border border-white/30">
-            <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-            </svg>
-        </div>
+            <div class="info-main">
+                <h1>Create a company workspace.</h1>
+                <p>
+                    Register your company, create the main manager account, and start managing kimlik records for clients,
+                    students and workers from one secure dashboard.
+                </p>
 
-        <div class="space-y-4">
-            <h1 class="text-4xl font-bold tracking-tight">Grow Your Business Faster.</h1>
-            <p class="text-blue-100 text-lg font-light leading-relaxed max-w-sm mx-auto">
-                Join 2,000+ companies managing their operations with our enterprise-grade infrastructure.
-            </p>
-        </div>
-
-        <div class="flex justify-center -space-x-4">
-            <img class="w-24 h-24 rounded-full border-4 border-white/30 avatar-glow bg-gray-100" src="https://i.ibb.co/hR0V6X8/man1.png" alt="Executive 1">
-            <img class="w-24 h-24 rounded-full border-4 border-white/30 avatar-glow bg-gray-100" src="https://i.ibb.co/L6vV9r8/man2.png" alt="Executive 2">
-            <img class="w-24 h-24 rounded-full border-4 border-white/30 avatar-glow bg-gray-100" src="https://i.ibb.co/vYm6zV5/man3.png" alt="Executive 3">
-        </div>
-
-        <p class="text-blue-50 italic text-sm max-w-xs">
-            "The best decision we made for our team scaling this year."
-        </p>
-    </div>
-
-    <div class="p-12 md:p-16 flex flex-col justify-center bg-white/30">
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-gray-900">Create Company</h2>
-            <p class="text-gray-500 mt-2">Fill in the details to launch your portal.</p>
-        </div>
-
-        <div th:if="${errorMessage}" class="mb-6 p-4 rounded-2xl bg-red-50 text-red-600 text-sm border border-red-100 text-center">
-            <span th:text="${errorMessage}"></span>
-        </div>
-
-        <form th:action="@{/company/register}" method="post" class="space-y-4">
-            <input type="text" name="companyName" placeholder="Company Identity" required
-                   class="w-full px-6 py-3 rounded-full input-pill text-gray-700">
-
-            <input type="text" name="ownerName" placeholder="Founder Name" required
-                   class="w-full px-6 py-3 rounded-full input-pill text-gray-700">
-
-            <input type="email" name="email" placeholder="Corporate Email" required
-                   class="w-full px-6 py-3 rounded-full input-pill text-gray-700">
-
-            <input type="text" name="username" placeholder="Username" required
-                   class="w-full px-6 py-3 rounded-full input-pill text-gray-700">
-
-            <input type="password" name="password" placeholder="Secure Password" required
-                   class="w-full px-6 py-3 rounded-full input-pill text-gray-700">
-
-            <div class="relative">
-                <select name="subscriptionPlan" class="w-full px-6 py-3 rounded-full input-pill text-gray-500 appearance-none cursor-pointer">
-                    <option value="MONTHLY">MONTHLY / YEARLY (Save 20%)</option>
-                    <option value="YEARLY">Yearly Plan</option>
-                </select>
-                <div class="absolute right-5 top-4 pointer-events-none text-gray-400">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <div class="features">
+                    <div class="feature">
+                        <div class="check">✓</div>
+                        <div>Separate data for every company.</div>
+                    </div>
+                    <div class="feature">
+                        <div class="check">✓</div>
+                        <div>Employee roles for clients, students and workers.</div>
+                    </div>
+                    <div class="feature">
+                        <div class="check">✓</div>
+                        <div>Email reminders before kimlik expiration.</div>
+                    </div>
                 </div>
             </div>
 
-            <input type="number" name="invitedByUserId" placeholder="Invite Code"
-                   class="w-full px-6 py-3 rounded-full input-pill text-gray-700">
+            <div class="info-footer">
+                After registration, the owner account will receive YONETICI access.
+            </div>
+        </section>
 
-            <button type="submit"
-                    class="w-full bg-[#3b44f6] hover:bg-blue-700 text-white font-bold py-4 rounded-full shadow-lg shadow-blue-200 transition-all transform active:scale-[0.98] mt-4 tracking-wider uppercase">
-                Get Started Now
-            </button>
-        </form>
+        <main class="form-side">
+            <div class="form-head">
+                <div class="tag">Company registration</div>
+                <h2>Register your company</h2>
+                <p>Fill in the company and owner details. You can add employees after logging in.</p>
+            </div>
 
-        <p class="text-center text-[10px] text-gray-400 mt-8 font-bold uppercase tracking-widest">
-            SECURE 256-BIT SSL ENCRYPTED CONNECTION
-        </p>
+            <div th:if="${errorMessage}" class="error-box" th:text="${errorMessage}">
+                Error message
+            </div>
+
+            <form th:action="@{/company/register}" method="post">
+
+                <div class="field">
+                    <label for="companyName">Company Name</label>
+                    <input id="companyName" type="text" name="companyName"
+                           th:value="${companyName}"
+                           placeholder="Example Education Agency" required>
+                </div>
+
+                <div class="grid-2">
+                    <div class="field">
+                        <label for="ownerName">Owner Full Name</label>
+                        <input id="ownerName" type="text" name="ownerName"
+                               th:value="${ownerName}"
+                               placeholder="Full name" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="email">Owner Email</label>
+                        <input id="email" type="email" name="email"
+                               th:value="${email}"
+                               placeholder="owner@email.com" required>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="field">
+                        <label for="username">Username</label>
+                        <input id="username" type="text" name="username"
+                               th:value="${username}"
+                               placeholder="username" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <input id="password" type="password" name="password"
+                               placeholder="Create password" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="subscriptionPlan">Subscription Plan</label>
+                    <select id="subscriptionPlan" name="subscriptionPlan">
+                        <option value="MONTHLY" th:selected="${subscriptionPlan == 'MONTHLY'}">Monthly</option>
+                        <option value="YEARLY" th:selected="${subscriptionPlan == 'YEARLY'}">Yearly</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="invitedByUserId">
+                        Invited By User ID <span class="optional">(optional)</span>
+                    </label>
+                    <input id="invitedByUserId" type="number" name="invitedByUserId"
+                           th:value="${invitedByUserId}"
+                           placeholder="Optional">
+                </div>
+
+                <button type="submit" class="submit">Create Company Account</button>
+            </form>
+
+            <div class="login-link">
+                Already have an account?
+                <a th:href="@{/loginPage}">Sign in</a>
+            </div>
+
+            <div class="note">
+                Your company data will be separated from other companies. The owner account can create employees and assign roles.
+            </div>
+        </main>
+
     </div>
 </div>
-
 </body>
 </html>

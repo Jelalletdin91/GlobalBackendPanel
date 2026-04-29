@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Companies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #080b14;
+            --surface: rgba(255,255,255,0.04);
+            --surface-hover: rgba(255,255,255,0.07);
+            --border: rgba(255,255,255,0.08);
+            --accent: #3b82f6;
+            --accent-glow: rgba(59,130,246,0.3);
+            --accent2: #06b6d4;
+            --text: #f0f4ff;
+            --text-muted: rgba(240,244,255,0.45);
+            --text-faint: rgba(240,244,255,0.22);
+            --green: #10b981;
+            --red: #f87171;
+            --yellow: #fbbf24;
+        }
+
+        html, body {
+            min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 40% at 10% 0%, rgba(59,130,246,0.1) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 40% at 90% 100%, rgba(6,182,212,0.07) 0%, transparent 55%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+            z-index: 0;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2.5rem;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 1rem; }
+
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            box-shadow: 0 0 20px var(--accent-glow);
+            flex-shrink: 0;
+        }
+
+        .logo-icon svg { width: 20px; height: 20px; color: white; }
+
+        .header-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .header-sub {
+            font-size: 0.8rem;
+            color: var(--text-faint);
+            margin-top: 0.15rem;
+        }
+
+        .badge-count {
+            padding: 0.3rem 0.8rem;
+            background: rgba(59,130,246,0.1);
+            border: 1px solid rgba(59,130,246,0.2);
+            border-radius: 100px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #93c5fd;
+            letter-spacing: 0.04em;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        thead tr { border-bottom: 1px solid var(--border); }
+
+        thead th {
+            padding: 1rem 1.4rem;
+            text-align: left;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-faint);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--surface-hover); }
+
+        tbody td {
+            padding: 1.1rem 1.4rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            vertical-align: middle;
+        }
+
+        .cell-id {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.8rem;
+            color: var(--text-faint);
+            font-weight: 700;
+        }
+
+        .cell-name {
+            font-weight: 600;
+            color: var(--text) !important;
+            font-size: 0.9rem !important;
+        }
+
+        .plan-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .plan-monthly {
+            background: rgba(251,191,36,0.1);
+            border: 1px solid rgba(251,191,36,0.2);
+            color: var(--yellow);
+        }
+
+        .plan-yearly {
+            background: rgba(59,130,246,0.1);
+            border: 1px solid rgba(59,130,246,0.2);
+            color: #93c5fd;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .status-active .status-dot {
+            background: var(--green);
+            box-shadow: 0 0 6px var(--green);
+            animation: blink 2s infinite;
+        }
+
+        .status-active { color: var(--green); }
+
+        .status-inactive .status-dot { background: var(--red); }
+        .status-inactive { color: var(--red); }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .btn-enter {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1.1rem;
+            background: rgba(59,130,246,0.1);
+            border: 1px solid rgba(59,130,246,0.2);
+            border-radius: 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #93c5fd;
+            text-decoration: none;
+            transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-enter svg { width: 13px; height: 13px; transition: transform 0.15s; }
+
+        .btn-enter:hover {
+            background: rgba(59,130,246,0.18);
+            border-color: rgba(59,130,246,0.4);
+            box-shadow: 0 0 12px var(--accent-glow);
+            transform: translateY(-1px);
+        }
+
+        .btn-enter:hover svg { transform: translateX(2px); }
+
+        .empty {
+            padding: 4rem 2rem;
+            text-align: center;
+            color: var(--text-faint);
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.68rem;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: var(--text-faint);
+        }
+
+        @media (max-width: 700px) {
+            .header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            thead th:nth-child(1), tbody td:nth-child(1) { display: none; }
+            .page { padding: 1.5rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+
+    <div class="header">
+        <div class="header-left">
+            <div class="logo-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="header-title">All Companies</div>
+                <div class="header-sub">Developer dashboard · manage registered companies</div>
+            </div>
+        </div>
+        <div class="badge-count" th:text="${#lists.size(companies)} + ' companies'">0 companies</div>
+    </div>
+
+    <div class="card">
+        <table>
+            <thead>
+            <tr>
+                <th>#ID</th>
+                <th>Company</th>
+                <th>Plan</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : ${companies}">
+                <td><span class="cell-id" th:text="'#' + ${c.id}"></span></td>
+
+                <td><span class="cell-name" th:text="${c.name}"></span></td>
+
+                <td>
+                        <span th:classappend="${c.subscriptionPlan == 'YEARLY'} ? 'plan-yearly' : 'plan-monthly'"
+                              class="plan-badge"
+                              th:text="${c.subscriptionPlan}">
+                        </span>
+                </td>
+
+                <td>
+                        <span th:classappend="${c.active} ? 'status-active' : 'status-inactive'" class="status">
+                            <span class="status-dot"></span>
+                            <span th:text="${c.active} ? 'Active' : 'Inactive'"></span>
+                        </span>
+                </td>
+
+                <td>
+                    <a class="btn-enter" th:href="@{/developer/company/{id}/enter(id=${c.id})}">
+                        Enter
+                        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(companies)}">
+                <td colspan="5">
+                    <div class="empty">No companies registered yet.</div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">Nexus Developer Portal · Secure Connection</div>
+
+</div>
+
+</body>
+</html>

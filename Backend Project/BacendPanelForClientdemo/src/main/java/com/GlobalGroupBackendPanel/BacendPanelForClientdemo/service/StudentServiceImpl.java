@@ -1,9 +1,8 @@
 package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service;
 
-import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.AppUser;
+import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.Company;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.StudentKimlik;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.StudentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,60 +12,42 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
     private final ActivityLogService activityLogService;
-    private final CurrentUserService currentUserService;
+    private final CompanyContextService companyContextService;
 
-    @Autowired
     public StudentServiceImpl(StudentRepository studentRepository,
                               ActivityLogService activityLogService,
-                              CurrentUserService currentUserService) {
+                              CompanyContextService companyContextService) {
         this.studentRepository = studentRepository;
         this.activityLogService = activityLogService;
-        this.currentUserService = currentUserService;
+        this.companyContextService = companyContextService;
     }
 
     @Override
     public List<StudentKimlik> findAll() {
-        AppUser currentUser = currentUserService.getCurrentUser();
-
-        if (currentUser.getCompany() == null) {
-            throw new RuntimeException("User has no company");
-        }
-
-        return studentRepository.findByCompanyIdOrderByKimlikEndDateAsc(
-                currentUser.getCompany().getId()
-        );
+        Long companyId = companyContextService.getCurrentCompanyId();
+        return studentRepository.findByCompanyIdOrderByKimlikEndDateAsc(companyId);
     }
 
     @Override
     public List<StudentKimlik> search(String keyword) {
-        AppUser currentUser = currentUserService.getCurrentUser();
-
-        if (currentUser.getCompany() == null) {
-            throw new RuntimeException("User has no company");
-        }
+        Long companyId = companyContextService.getCurrentCompanyId();
 
         if (keyword == null || keyword.trim().isEmpty()) {
-            return studentRepository.findByCompanyIdOrderByKimlikEndDateAsc(
-                    currentUser.getCompany().getId()
-            );
+            return studentRepository.findByCompanyIdOrderByKimlikEndDateAsc(companyId);
         }
 
-        return studentRepository.searchByCompanyIdAndKeyword(
-                currentUser.getCompany().getId(),
-                keyword
-        );
+        return studentRepository.searchByCompanyIdAndKeyword(companyId, keyword);
     }
 
     @Override
     public StudentKimlik findById(Long id) {
-        AppUser currentUser = currentUserService.getCurrentUser();
+        Long companyId = companyContextService.getCurrentCompanyId();
 
         StudentKimlik studentKimlik = studentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         if (studentKimlik.getCompany() == null ||
-                currentUser.getCompany() == null ||
-                !studentKimlik.getCompany().getId().equals(currentUser.getCompany().getId())) {
+                !studentKimlik.getCompany().getId().equals(companyId)) {
             throw new RuntimeException("ACCESS DENIED");
         }
 
@@ -75,16 +56,12 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public StudentKimlik save(StudentKimlik studentKimlik) {
-        AppUser currentUser = currentUserService.getCurrentUser();
-
-        if (currentUser.getCompany() == null) {
-            throw new RuntimeException("User has no company");
-        }
+        Company company = companyContextService.getCurrentCompany();
 
         boolean isNew = (studentKimlik.getId() == null);
 
         if (isNew) {
-            studentKimlik.setCompany(currentUser.getCompany());
+            studentKimlik.setCompany(company);
             studentKimlik.setNotified60Days(false);
         } else {
             StudentKimlik existing = findById(studentKimlik.getId());

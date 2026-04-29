@@ -1,9 +1,8 @@
 package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service;
 
-import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.AppUser;
+import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.Company;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.VorkerKimlik;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.VorkerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,60 +12,42 @@ public class VorkerKimlikServiceImpl implements VorkerKimlikService {
 
     private final VorkerRepository vorkerRepository;
     private final ActivityLogService activityLogService;
-    private final CurrentUserService currentUserService;
+    private final CompanyContextService companyContextService;
 
-    @Autowired
     public VorkerKimlikServiceImpl(VorkerRepository vorkerRepository,
                                    ActivityLogService activityLogService,
-                                   CurrentUserService currentUserService) {
+                                   CompanyContextService companyContextService) {
         this.vorkerRepository = vorkerRepository;
         this.activityLogService = activityLogService;
-        this.currentUserService = currentUserService;
+        this.companyContextService = companyContextService;
     }
 
     @Override
     public List<VorkerKimlik> findAll() {
-        AppUser currentUser = currentUserService.getCurrentUser();
-
-        if (currentUser.getCompany() == null) {
-            throw new RuntimeException("User has no company");
-        }
-
-        return vorkerRepository.findByCompanyIdOrderByKimlikEndDateAsc(
-                currentUser.getCompany().getId()
-        );
+        Long companyId = companyContextService.getCurrentCompanyId();
+        return vorkerRepository.findByCompanyIdOrderByKimlikEndDateAsc(companyId);
     }
 
     @Override
     public List<VorkerKimlik> search(String keyword) {
-        AppUser currentUser = currentUserService.getCurrentUser();
-
-        if (currentUser.getCompany() == null) {
-            throw new RuntimeException("User has no company");
-        }
+        Long companyId = companyContextService.getCurrentCompanyId();
 
         if (keyword == null || keyword.trim().isEmpty()) {
-            return vorkerRepository.findByCompanyIdOrderByKimlikEndDateAsc(
-                    currentUser.getCompany().getId()
-            );
+            return vorkerRepository.findByCompanyIdOrderByKimlikEndDateAsc(companyId);
         }
 
-        return vorkerRepository.searchByCompanyIdAndKeyword(
-                currentUser.getCompany().getId(),
-                keyword
-        );
+        return vorkerRepository.searchByCompanyIdAndKeyword(companyId, keyword);
     }
 
     @Override
     public VorkerKimlik findById(Long theId) {
-        AppUser currentUser = currentUserService.getCurrentUser();
+        Long companyId = companyContextService.getCurrentCompanyId();
 
         VorkerKimlik vorkerKimlik = vorkerRepository.findById(theId)
                 .orElseThrow(() -> new RuntimeException("Worker not found"));
 
         if (vorkerKimlik.getCompany() == null ||
-                currentUser.getCompany() == null ||
-                !vorkerKimlik.getCompany().getId().equals(currentUser.getCompany().getId())) {
+                !vorkerKimlik.getCompany().getId().equals(companyId)) {
             throw new RuntimeException("ACCESS DENIED");
         }
 
@@ -75,16 +56,12 @@ public class VorkerKimlikServiceImpl implements VorkerKimlikService {
 
     @Override
     public VorkerKimlik save(VorkerKimlik vorkerKimlik) {
-        AppUser currentUser = currentUserService.getCurrentUser();
-
-        if (currentUser.getCompany() == null) {
-            throw new RuntimeException("User has no company");
-        }
+        Company company = companyContextService.getCurrentCompany();
 
         boolean isNew = (vorkerKimlik.getId() == null);
 
         if (isNew) {
-            vorkerKimlik.setCompany(currentUser.getCompany());
+            vorkerKimlik.setCompany(company);
             vorkerKimlik.setNotified60Days(false);
         } else {
             VorkerKimlik existing = findById(vorkerKimlik.getId());

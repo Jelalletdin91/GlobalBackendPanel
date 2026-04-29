@@ -69,16 +69,16 @@
                     <td>
                         <span th:each="r : ${e.roles}" class="badge bg-light text-dark me-1 mb-1" th:text="${r.name}">Role</span>
                     </td>
-                    <td>
-    <span th:if="${tempEmployee.roles.?[name == 'YONETICI'].size() > 0}">
+                    <td class="text-end">
+    <span th:if="${e.roles.?[name == 'YONETICI'].size() > 0}">
         Protected
     </span>
 
-                        <span th:if="${tempEmployee.roles.?[name == 'YONETICI'].size() == 0}">
-        <a th:href="@{/employee/showFormForUpdate(employeeId=${tempEmployee.id})}"
+                        <span th:if="${e.roles.?[name == 'YONETICI'].size() == 0}">
+        <a th:href="@{/employee/showFormForUpdate(employeeId=${e.id})}"
            class="btn btn-sm btn-outline-primary">Update</a>
 
-        <a th:href="@{/employee/delete(employeeId=${tempEmployee.id})}"
+        <a th:href="@{/employee/delete(employeeId=${e.id})}"
            class="btn btn-sm btn-outline-danger"
            onclick="return confirm('Are you sure?')">Delete</a>
     </span>

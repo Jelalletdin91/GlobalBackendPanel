@@ -6,9 +6,13 @@ import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.KimlikRep
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.StudentRepository;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.VorkerRepository;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service.CurrentUserService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 @Controller
 public class MainController {
@@ -24,7 +28,6 @@ public class MainController {
                           VorkerRepository vorkerRepository,
                           ActivityLogRepository activityLogRepository,
                           CurrentUserService currentUserService) {
-
         this.kimlikRepository = kimlikRepository;
         this.studentRepository = studentRepository;
         this.vorkerRepository = vorkerRepository;
@@ -33,20 +36,35 @@ public class MainController {
     }
 
     @GetMapping("/")
-    public String showMainPage(Model model) {
+    public String showMainPage(Model model, Authentication authentication, HttpSession session) {
 
-        AppUser currentUser = currentUserService.getCurrentUser();
+        boolean isDeveloper = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_DEVELOPER"));
 
-        if (currentUser.getCompany() == null) {
-            model.addAttribute("clientCount", 0);
-            model.addAttribute("studentCount", 0);
-            model.addAttribute("workerCount", 0);
-            model.addAttribute("recentActivities", java.util.List.of());
+        Long companyId;
 
-            return "Kimlik/homePage";
+        if (isDeveloper) {
+            Object selectedCompanyId = session.getAttribute("DEV_COMPANY_ID");
+
+            if (selectedCompanyId == null) {
+                return "redirect:/developer/companies";
+            }
+
+            companyId = (Long) selectedCompanyId;
+
+        } else {
+            AppUser currentUser = currentUserService.getCurrentUser();
+
+            if (currentUser.getCompany() == null) {
+                model.addAttribute("clientCount", 0);
+                model.addAttribute("studentCount", 0);
+                model.addAttribute("workerCount", 0);
+                model.addAttribute("recentActivities", List.of());
+                return "Kimlik/homePage";
+            }
+
+            companyId = currentUser.getCompany().getId();
         }
-
-        Long companyId = currentUser.getCompany().getId();
 
         model.addAttribute("clientCount", kimlikRepository.countByCompanyId(companyId));
         model.addAttribute("studentCount", studentRepository.countByCompanyId(companyId));

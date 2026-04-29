@@ -2,6 +2,7 @@ package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service;
 
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.ActivityLog;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.AppUser;
+import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.Company;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.ActivityLogRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,52 +12,38 @@ import java.util.List;
 public class ActivityLogServiceImpl implements ActivityLogService {
 
     private final ActivityLogRepository activityLogRepository;
-    private final CurrentUserService currentUserService;
+    private final CompanyContextService companyContextService;
 
     public ActivityLogServiceImpl(ActivityLogRepository activityLogRepository,
-                                  CurrentUserService currentUserService) {
+                                  CompanyContextService companyContextService) {
         this.activityLogRepository = activityLogRepository;
-        this.currentUserService = currentUserService;
+        this.companyContextService = companyContextService;
     }
 
     @Override
     public void save(String actionType, String entityType, String entityName, String description) {
-        AppUser currentUser = currentUserService.getCurrentUser();
+        AppUser currentUser = companyContextService.getCurrentUserOrNull();
+        Company company = companyContextService.getCurrentCompany();
 
         ActivityLog log = new ActivityLog(actionType, entityType, entityName, description);
 
         log.setUser(currentUser);
-
-        if (currentUser.getCompany() != null) {
-            log.setCompany(currentUser.getCompany());
-        }
+        log.setCompany(company);
 
         activityLogRepository.save(log);
     }
 
     @Override
     public List<ActivityLog> findTop5() {
-        AppUser currentUser = currentUserService.getCurrentUser();
+        Long companyId = companyContextService.getCurrentCompanyId();
 
-        if (currentUser.getCompany() == null) {
-            return List.of();
-        }
-
-        return activityLogRepository.findTop5ByCompanyIdOrderByCreatedAtDesc(
-                currentUser.getCompany().getId()
-        );
+        return activityLogRepository.findTop5ByCompanyIdOrderByCreatedAtDesc(companyId);
     }
 
     @Override
     public List<ActivityLog> findAll() {
-        AppUser currentUser = currentUserService.getCurrentUser();
+        Long companyId = companyContextService.getCurrentCompanyId();
 
-        if (currentUser.getCompany() == null) {
-            return List.of();
-        }
-
-        return activityLogRepository.findByCompanyIdOrderByCreatedAtDesc(
-                currentUser.getCompany().getId()
-        );
+        return activityLogRepository.findByCompanyIdOrderByCreatedAtDesc(companyId);
     }
 }
