@@ -302,8 +302,8 @@
 
 <aside class="sidebar" id="sidebar">
     <div class="brand-box">
-        <div class="brand-logo">K</div>
-        <span class="fw-bold fs-5">Kimlik Pro</span>
+        <div class="brand-logo" th:text="${companyFirstLetterOfName}"></div>
+        <span class="fw-bold fs-5" th:text="${companyName}"></span>
     </div>
 
     <a th:href="@{/}" class="nav-link-pro">

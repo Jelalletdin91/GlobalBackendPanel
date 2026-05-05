@@ -27,21 +27,22 @@ public class Company {
     @Column(name = "active", nullable = false)
     private boolean active = true;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invited_by_user_id")
-    private AppUser invitedByUser;
+
+
+    @Column(name = "invted_by_user_id")
+    private String invitedBy;
 
     public Company() {
     }
 
     public Company(String name, String subscriptionPlan, LocalDate subscriptionStart,
-                   LocalDate subscriptionEnd, boolean active, AppUser invitedByUser) {
+                   LocalDate subscriptionEnd, boolean active, String invitedByUser) {
         this.name = name;
         this.subscriptionPlan = subscriptionPlan;
         this.subscriptionStart = subscriptionStart;
         this.subscriptionEnd = subscriptionEnd;
         this.active = active;
-        this.invitedByUser = invitedByUser;
+        this.invitedBy = invitedByUser;
     }
 
     public Long getId() {
@@ -68,8 +69,8 @@ public class Company {
         return active;
     }
 
-    public AppUser getInvitedByUser() {
-        return invitedByUser;
+    public String  getInvitedBy() {
+        return invitedBy;
     }
 
     public void setId(Long id) {
@@ -96,8 +97,8 @@ public class Company {
         this.active = active;
     }
 
-    public void setInvitedByUser(AppUser invitedByUser) {
-        this.invitedByUser = invitedByUser;
+    public void setInvitedBy(String invitedByUser) {
+        this.invitedBy = invitedByUser;
     }
 
     @Override

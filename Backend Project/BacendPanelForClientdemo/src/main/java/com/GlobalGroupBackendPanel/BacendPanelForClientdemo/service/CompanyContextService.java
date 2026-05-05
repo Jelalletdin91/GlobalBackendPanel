@@ -38,6 +38,28 @@ public class CompanyContextService {
         return currentUserService.getCurrentUser();
     }
 
+    public Long getSelectedDeveloperCompanyId() {
+        Object companyId = session.getAttribute("DEV_COMPANY_ID");
+
+        if (companyId == null) {
+            return null;
+        }
+
+        if (companyId instanceof Long) {
+            return (Long) companyId;
+        }
+
+        if (companyId instanceof Integer) {
+            return ((Integer) companyId).longValue();
+        }
+
+        if (companyId instanceof Number) {
+            return ((Number) companyId).longValue();
+        }
+
+        return Long.valueOf(companyId.toString());
+    }
+
     public Long getCurrentCompanyId() {
         if (isDeveloper()) {
             Object companyId = session.getAttribute("DEV_COMPANY_ID");

@@ -28,7 +28,7 @@ public class CompanyController {
             @RequestParam String username,
             @RequestParam String password,
             @RequestParam(defaultValue = "MONTHLY") String subscriptionPlan,
-            @RequestParam(required = false) Long invitedByUserId,
+            @RequestParam(required = false) String invitedBy,
             Model model
     ) {
         try {
@@ -39,7 +39,7 @@ public class CompanyController {
                     username,
                     password,
                     subscriptionPlan,
-                    invitedByUserId
+                    invitedBy
             );
 
             return "redirect:/loginPage?registered";
@@ -51,7 +51,7 @@ public class CompanyController {
             model.addAttribute("email", email);
             model.addAttribute("username", username);
             model.addAttribute("subscriptionPlan", subscriptionPlan);
-            model.addAttribute("invitedByUserId", invitedByUserId);
+            model.addAttribute("invitedBy", invitedBy);
 
             return "Kimlik/company-register";
         }

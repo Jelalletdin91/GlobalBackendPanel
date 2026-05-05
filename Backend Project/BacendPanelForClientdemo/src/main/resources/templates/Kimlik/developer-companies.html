@@ -294,6 +294,7 @@
                 <th>Company</th>
                 <th>Plan</th>
                 <th>Status</th>
+                <th>Invited By</th>
                 <th>Action</th>
             </tr>
             </thead>
@@ -315,6 +316,10 @@
                             <span class="status-dot"></span>
                             <span th:text="${c.active} ? 'Active' : 'Inactive'"></span>
                         </span>
+                </td>
+
+                <td>
+                    <span th:text="${c.invitedBy != null ? c.invitedBy : '-'}"></span>
                 </td>
 
                 <td>

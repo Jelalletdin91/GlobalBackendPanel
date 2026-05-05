@@ -6,6 +6,7 @@ import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.Role;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.CompanyRepository;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.RoleRepository;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,26 +32,33 @@ public class CompanyService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public void createCompanyWithOwner(String companyName,
                                        String ownerName,
                                        String email,
                                        String username,
                                        String password,
                                        String subscriptionPlan,
-                                       Long invitedByUserId) {
+                                       String invitedBy) {
 
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("This username already exists");
         }
 
-        AppUser invitedBy = null;
-        if (invitedByUserId != null) {
-            invitedBy = userRepository.findById(invitedByUserId).orElse(null);
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new RuntimeException("This email already exists");
         }
 
         Company company = new Company();
         company.setName(companyName);
-        company.setSubscriptionPlan(subscriptionPlan == null || subscriptionPlan.isBlank() ? "MONTHLY" : subscriptionPlan);
+        company.setInvitedBy(invitedBy);
+
+        company.setSubscriptionPlan(
+                subscriptionPlan == null || subscriptionPlan.isBlank()
+                        ? "MONTHLY"
+                        : subscriptionPlan
+        );
+
         company.setSubscriptionStart(LocalDate.now());
 
         if ("YEARLY".equalsIgnoreCase(company.getSubscriptionPlan())) {
@@ -60,7 +68,6 @@ public class CompanyService {
         }
 
         company.setActive(true);
-        company.setInvitedByUser(invitedBy);
 
         Company savedCompany = companyRepository.save(company);
 
@@ -71,10 +78,10 @@ public class CompanyService {
         roles.add(yoneticiRole);
 
         AppUser owner = new AppUser();
-        owner.setName(ownerName == null || ownerName.isBlank() ? companyName + " Owner" : ownerName);
+        owner.setName(ownerName);
+        owner.setEmail(email);
         owner.setUsername(username);
         owner.setPassword(passwordEncoder.encode(password));
-        owner.setEmail(email);
         owner.setEnabled(true);
         owner.setCompany(savedCompany);
         owner.setRoles(roles);
