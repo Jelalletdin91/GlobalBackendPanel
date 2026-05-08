@@ -36,6 +36,8 @@ public class StudentKimlikController {
         addCompanyInfo(model);
         model.addAttribute("studentKimliks", studentKimliks);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("username", "Yonetici");
+        model.addAttribute("userRole", "Manager");
 
         return "Kimlik/student-kimlik-list";
     }

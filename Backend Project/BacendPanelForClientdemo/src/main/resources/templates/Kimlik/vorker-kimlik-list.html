@@ -12,6 +12,58 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
+
+
+    .profile-box {
+    margin: 24px 0;
+    padding: 14px;
+    border-radius: 16px;
+    background: rgba(99, 102, 241, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.12);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.profile-box:hover{
+transform: translateY(-2px);
+background: rgba(99, 102, 241, 0,12);
+}
+
+.profile-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #4f46e5, #2563eb);
+    color: white;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.profile-info {
+    min-width: 0;
+}
+
+.profile-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.profile-role {
+    margin-top: 3px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
     :root {
       --accent: #6366f1;
       --accent-hover: #4f46e5;
@@ -301,10 +353,15 @@
 </div>
 
 <aside class="sidebar" id="sidebar">
-  <div class="brand-box">
-    <div class="brand-logo" th:text="${companyFirstLetterOfName}"></div>
-    <span class="fw-bold fs-5" th:text="${companyName}"></span>
-  </div>
+
+  <a th:href="@{/profile}" class="profile-box">
+    <div class="profile-avatar" th:text="${companyFirstLetterOfName}">K</div>
+
+    <div class="profile-info">
+      <div class="profile-name" th:text="${companyName}">Company Name</div>
+      <div class="profile-role" th:text="${userRole}">Manager</div>
+    </div>
+  </a>
 
   <a th:href="@{/}" class="nav-link-pro">
     <i class="fa-solid fa-chart-pie"></i> Dashboard

@@ -36,6 +36,8 @@ public class KimlikController {
         addCompanyInfo(model);
         model.addAttribute("kimliks", kimliks);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("username", "Yonetici");
+        model.addAttribute("userRole", "Manager");
 
         return "Kimlik/list_of_kimlik";
     }

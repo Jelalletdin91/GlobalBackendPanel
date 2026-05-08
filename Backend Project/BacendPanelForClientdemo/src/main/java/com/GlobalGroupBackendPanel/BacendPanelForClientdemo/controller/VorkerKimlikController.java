@@ -36,6 +36,8 @@ public class VorkerKimlikController {
         addCompanyInfo(model);
         model.addAttribute("vorkerKimliks", vorkerKimliks);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("username", "Yonetici");
+        model.addAttribute("userRole", "Manager");
 
         return "Kimlik/vorker-kimlik-list";
     }

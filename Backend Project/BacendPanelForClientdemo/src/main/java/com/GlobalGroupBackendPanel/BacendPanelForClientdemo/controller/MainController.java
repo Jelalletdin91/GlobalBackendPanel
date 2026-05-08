@@ -48,6 +48,8 @@ public class MainController {
         model.addAttribute("clientCount", kimlikRepository.countByCompanyId(companyId));
         model.addAttribute("studentCount", studentRepository.countByCompanyId(companyId));
         model.addAttribute("workerCount", vorkerRepository.countByCompanyId(companyId));
+        model.addAttribute("username", "Yonetici");
+        model.addAttribute("userRole", "Manager");
 
         model.addAttribute("recentActivities",
                 activityLogRepository.findTop5ByCompanyIdOrderByCreatedAtDesc(companyId));

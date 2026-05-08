@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kimlik OS | Profile</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --accent:      #6366f1;
+            --accent-dark: #4f46e5;
+            --accent-soft: rgba(99,102,241,0.08);
+            --accent-glow: rgba(99,102,241,0.18);
+            --body-bg:     #f5f6fa;
+            --text:        #111827;
+            --text-muted:  #6b7280;
+            --text-faint:  #9ca3af;
+            --border:      rgba(229,231,235,0.9);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--body-bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 2rem 1rem;
+        }
+
+        /* ── Shell ── */
+        .shell {
+            width: 100%;
+            max-width: 500px;
+            animation: fadeUp 0.45s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Top bar ── */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .top-bar-brand {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .brand-mark {
+            width: 34px; height: 34px;
+            background: var(--accent);
+            border-radius: 9px;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: white;
+            box-shadow: 0 4px 10px var(--accent-glow);
+        }
+
+        .brand-label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .brand-sub {
+            font-size: 0.7rem;
+            color: var(--text-faint);
+            margin-top: 1px;
+        }
+
+        /* ── Card ── */
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03), 0 8px 32px rgba(0,0,0,0.05);
+        }
+
+        /* Hero top strip */
+        .card-hero {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4f46e5 100%);
+            padding: 2rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+        }
+
+        .card-hero::after {
+            content: '';
+            position: absolute;
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            background: rgba(99,102,241,0.2);
+            filter: blur(60px);
+            bottom: -60px; right: -40px;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 11px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 100px;
+            font-size: 0.67rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.8);
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Avatar ── */
+        .avatar-wrap {
+            position: relative;
+            z-index: 2;
+            padding: 0 2rem;
+            margin-top: -2.5rem;
+        }
+
+        .avatar {
+            width: 76px; height: 76px;
+            border-radius: 18px;
+            background: var(--accent);
+            color: white;
+            font-size: 1.9rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+            border: 3px solid white;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        /* ── Body ── */
+        .card-body-inner {
+            padding: 1.25rem 2rem 2rem;
+        }
+
+        .profile-name {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            margin-bottom: 0.4rem;
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            background: var(--accent-soft);
+            border: 1px solid rgba(99,102,241,0.15);
+            border-radius: 100px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1.75rem;
+        }
+
+        /* ── Info rows ── */
+        .info-section-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-faint);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .info-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin-bottom: 2rem;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.85rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-row:last-child { border-bottom: none; }
+
+        .info-icon {
+            width: 34px; height: 34px;
+            border-radius: 9px;
+            background: var(--accent-soft);
+            display: grid;
+            place-items: center;
+            font-size: 0.85rem;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .info-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-faint);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            line-height: 1;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* ── Back button ── */
+        .btn-back {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            height: 46px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 4px 14px var(--accent-glow);
+        }
+
+        .btn-back:hover {
+            background: var(--accent-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99,102,241,0.3);
+            color: white;
+        }
+
+        .btn-back:active { transform: translateY(0); }
+
+        @media (max-width: 480px) {
+            .card-body-inner { padding: 1rem 1.25rem 1.5rem; }
+            .card-hero { padding: 1.5rem 1.5rem 3.5rem; }
+            .avatar-wrap { padding: 0 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="shell">
+
+    <!-- Top brand bar -->
+    <div class="top-bar">
+        <div class="top-bar-brand">
+            <div class="brand-mark">K</div>
+            <div>
+                <div class="brand-label">Kimlik Pro</div>
+                <div class="brand-sub">Identity Management</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+
+        <!-- Hero strip -->
+        <div class="card-hero">
+            <div class="hero-tag">
+                <i class="bi bi-person-badge"></i> User Profile
+            </div>
+        </div>
+
+        <!-- Avatar overlapping the hero -->
+        <div class="avatar-wrap">
+            <div class="avatar" th:text="${companyFirstLetterOfName}">K</div>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body-inner">
+
+            <div class="profile-name" th:text="${userName}">User Name</div>
+            <div class="role-badge">
+                <i class="bi bi-shield-check"></i>
+                <span th:text="${userRole}">Role</span>
+            </div>
+
+            <div class="info-section-label">Account Details</div>
+
+            <div class="info-grid">
+
+                <div class="info-row">
+                    <div class="info-icon"><i class="bi bi-person"></i></div>
+                    <div>
+                        <div class="info-label">Username</div>
+                        <div class="info-value" th:text="${username != null ? username : '—'}">username</div>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-icon"><i class="bi bi-envelope"></i></div>
+                    <div>
+                        <div class="info-label">Email</div>
+                        <div class="info-value" th:text="${userEmail != null ? userEmail : '—'}">email@example.com</div>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-icon"><i class="bi bi-building"></i></div>
+                    <div>
+                        <div class="info-label">Company</div>
+                        <div class="info-value" th:text="${companyName}">Company Name</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <a th:href="@{/}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
