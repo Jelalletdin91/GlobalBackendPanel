@@ -1,6 +1,8 @@
 package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.controller;
 
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.AppUser;
+import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.Company;
+import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service.CompanyContextService;
 import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.service.EmployeeService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -14,14 +16,26 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final CompanyContextService companyContextService;
 
-    public EmployeeController(EmployeeService employeeService){
+    public EmployeeController(EmployeeService employeeService, CompanyContextService companyContextService){
         this.employeeService = employeeService;
+        this.companyContextService=companyContextService;
+    }
+
+    private void addCompanyInfo(Model model) {
+        Company company = companyContextService.getCurrentCompany();
+        model.addAttribute("companyName", company.getName());
+        model.addAttribute("companyFirstLetterOfName", company.getName().charAt(0));
     }
 
     @GetMapping("/list")
     public String list(Model model){
         List<AppUser> employees = employeeService.findAllEmployee();
+        addCompanyInfo(model);
+
+        model.addAttribute("username", "Yonetici");
+        model.addAttribute("userRole", "Manager");
         model.addAttribute("employees", employees);
         return "Kimlik/employee-list";
     }

@@ -1,93 +1,493 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <title>Employee Management</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        body{
-            background:#f6f8fc;
-        }
-        .page-card{
-            background:#fff;
-            border:none;
-            border-radius:22px;
-            box-shadow:0 10px 30px rgba(0,0,0,.08);
-        }
-        .page-title{
-            font-weight:800;
-        }
-        .top-actions{
-            display:flex;
-            gap:10px;
-            flex-wrap:wrap;
-        }
-        .btn-pro{
-            border-radius:12px;
-            padding:10px 16px;
-            font-weight:600;
-        }
-        .table thead th{
-            font-weight:700;
-        }
+
+        .sidebar-section-title{
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #9ca3af;
+  margin: 22px 12px 10px;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.sidebar-section-title::after{
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: rgba(229,231,235,.8);
+  margin-top: 8px;
+}
+
+      .profile-box {
+  margin: 24px 0;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.profile-box:hover{
+transform: translateY(-2px);
+background: rgba(99, 102, 241, 0,12);
+}
+
+.profile-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #4f46e5, #2563eb);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.profile-info {
+  min-width: 0;
+}
+
+.profile-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-role {
+  margin-top: 3px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+      :root {
+          --accent: #6366f1;
+          --accent-hover: #4f46e5;
+          --sidebar-bg: #ffffff;
+          --body-bg: #f9fafb;
+          --text-main: #111827;
+          --text-muted: #6b7280;
+          --card-border: rgba(229, 231, 235, 0.8);
+      }
+
+      body {
+          background-color: var(--body-bg);
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          color: var(--text-main);
+          margin: 0;
+      }
+
+      /* SIDEBAR */
+
+      .sidebar {
+          width: 280px;
+          background: var(--sidebar-bg);
+          border-right: 1px solid var(--card-border);
+          height: 100vh;
+          position: fixed;
+          padding: 32px 24px;
+          display: flex;
+          flex-direction: column;
+          z-index: 1050;
+          transition: transform 0.3s ease;
+      }
+
+      .brand-box {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 0 12px 32px;
+      }
+
+      .brand-logo {
+          width: 32px;
+          height: 32px;
+          background: var(--accent);
+          border-radius: 8px;
+          display: grid;
+          place-items: center;
+          color: white;
+          font-weight: 800;
+      }
+
+      .nav-link-pro {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 14px;
+          color: var(--text-muted);
+          text-decoration: none;
+          font-weight: 500;
+          border-radius: 10px;
+          transition: 0.2s;
+          margin-bottom: 4px;
+      }
+
+      .nav-link-pro:hover,
+      .nav-link-pro.active {
+          background: rgba(99, 102, 241, 0.08);
+          color: var(--accent);
+      }
+
+      /* MAIN */
+
+      .main-wrapper {
+          margin-left: 280px;
+          padding: 40px 60px;
+          transition: all 0.3s;
+      }
+
+      /* MOBILE */
+
+      .mobile-top-bar {
+          display: none;
+          background: white;
+          padding: 15px 20px;
+          border-bottom: 1px solid var(--card-border);
+          justify-content: space-between;
+          align-items: center;
+          position: sticky;
+          top: 0;
+          z-index: 1100;
+      }
+
+      /* CARDS */
+
+      .pro-card {
+          background: #ffffff;
+          border: 1px solid var(--card-border);
+          border-radius: 22px;
+          padding: 28px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      }
+
+      /* BUTTONS */
+
+      .btn-pro {
+          background: var(--accent);
+          color: white;
+          border: none;
+          padding: 10px 18px;
+          border-radius: 12px;
+          font-weight: 600;
+          text-decoration: none;
+          transition: 0.2s;
+      }
+
+      .btn-pro:hover {
+          background: var(--accent-hover);
+          color: white;
+      }
+
+      .btn-outline-pro {
+          border-radius: 12px;
+          font-weight: 600;
+          padding: 10px 18px;
+      }
+
+      /* TABLE */
+
+      .table {
+          margin: 0;
+      }
+
+      .table thead th {
+          border: none;
+          color: var(--text-muted);
+          font-size: 14px;
+          font-weight: 700;
+          padding-bottom: 18px;
+      }
+
+      .table tbody td {
+          vertical-align: middle;
+          border-color: #f1f5f9;
+          padding: 18px 0;
+          font-weight: 500;
+      }
+
+      .badge-role {
+          background: rgba(99, 102, 241, 0.08);
+          color: var(--accent);
+          padding: 8px 12px;
+          border-radius: 999px;
+          font-size: 12px;
+          font-weight: 700;
+      }
+
+      .status-active {
+          color: #16a34a;
+          font-weight: 700;
+      }
+
+      .status-disabled {
+          color: #dc2626;
+          font-weight: 700;
+      }
+
+      /* RESPONSIVE */
+
+      @media (max-width: 991px) {
+
+          .sidebar {
+              transform: translateX(-100%);
+          }
+
+          .sidebar.active {
+              transform: translateX(0);
+          }
+
+          .main-wrapper {
+              margin-left: 0;
+              padding: 24px 18px;
+          }
+
+          .mobile-top-bar {
+              display: flex;
+          }
+
+          .header-content {
+              flex-direction: column;
+              align-items: flex-start !important;
+              gap: 15px;
+          }
+
+          .table-responsive {
+              overflow-x: auto;
+          }
+      }
+
+      .overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.4);
+          z-index: 1040;
+      }
+
+      .overlay.active {
+          display: block;
+      }
+
     </style>
 </head>
-<body>
-<div class="container py-4">
-    <div class="page-card p-4">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-            <div>
-                <div class="text-muted small">Management</div>
-                <h2 class="page-title mb-0">Employees</h2>
-            </div>
 
-            <div class="top-actions">
-                <a th:href="@{/}" class="btn btn-outline-secondary btn-pro">Dashboard</a>
-                <a th:href="@{/employee/showForm}" class="btn btn-success btn-pro">+ Add Employee</a>
-            </div>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="mobile-top-bar">
+    <div class="d-flex align-items-center gap-2">
+        <div class="brand-logo" style="width: 24px; height: 24px; font-size: 12px;">K</div>
+        <span class="fw-bold">Kimlik Pro</span>
+    </div>
+    <button class="btn border-0 fs-4" id="menuBtn">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+</div>
+
+<aside class="sidebar" id="sidebar">
+
+    <a th:href="@{/profile}" class="profile-box">
+        <div class="profile-avatar" th:text="${companyFirstLetterOfName}">K</div>
+
+        <div class="profile-info">
+            <div class="profile-name" th:text="${companyName}">Company Name</div>
+            <div class="profile-role" th:text="${userRole}">Manager</div>
+        </div>
+    </a>
+
+    <div class="sidebar-section-title">
+        MAIN
+    </div>
+
+    <a th:href="@{/}" class="nav-link-pro">
+        <i class="fa-solid fa-chart-pie"></i> Dashboard
+    </a>
+
+    <div sec:authorize="hasAnyRole('KIMLIK', 'YONETICI', 'DEVELOPER')">
+        <a th:href="@{/kimlik/list}" class="nav-link-pro">
+            <i class="fa-solid fa-address-book"></i> Clients
+        </a>
+    </div>
+
+    <div sec:authorize="hasAnyRole('STUDENT_KIMLIK', 'YONETICI' , 'DEVELOPER')">
+        <a th:href="@{/Student_kimlik/list}" class="nav-link-pro">
+            <i class="fa-solid fa-graduation-cap"></i> Students
+        </a>
+    </div>
+
+    <div sec:authorize="hasAnyRole('VORKER_KIMLIK', 'YONETICI', 'DEVELOPER')">
+        <a th:href="@{/VorkerKimlik/list}" class="nav-link-pro">
+            <i class="fa-solid fa-user-gear"></i> Workers
+        </a>
+    </div>
+    <div class="sidebar-section-title mt-4">
+        MANAGEMENT
+    </div>
+    <div sec:authorize="hasAnyRole('YONETICI','DEVELOPER')">
+        <a th:href="@{/employee/list}" class="nav-link-pro active">
+            <i class="fa-solid fa-users-gear"></i>
+            Employees
+        </a>
+    </div>
+
+
+
+    <a th:href="@{/settings}" class="nav-link-pro">
+        <i class="fa-solid fa-gear"></i>
+        Settings
+    </a>
+
+    <div class="mt-auto">
+        <form th:action="@{/logout}" method="post">
+            <button class="nav-link-pro bg-transparent border-0 w-100 text-start text-danger">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+            </button>
+        </form>
+    </div>
+</aside>
+
+<!-- MAIN -->
+
+<main class="main-wrapper">
+
+    <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4 header-content">
+
+        <div>
+            <h1 class="fw-800 m-0">Employees</h1>
+            <p class="text-muted small">
+                Manage all employees and permissions
+            </p>
         </div>
 
+        <div class="d-flex gap-2 flex-wrap">
+
+
+            <a th:href="@{/employee/showForm}" class="btn-pro">
+                <i class="fa-solid fa-plus"></i>
+                Add Employee
+            </a>
+        </div>
+
+    </div>
+
+    <div class="pro-card">
+
         <div class="table-responsive">
+
             <table class="table align-middle">
+
                 <thead>
                 <tr>
                     <th>Name</th>
                     <th>Username</th>
-                    <th>Enabled</th>
+                    <th>Status</th>
                     <th>Roles</th>
                     <th class="text-end">Actions</th>
                 </tr>
                 </thead>
+
                 <tbody>
+
                 <tr th:each="e : ${employees}">
+
                     <td th:text="${e.name}">Name</td>
+
                     <td th:text="${e.username}">Username</td>
+
                     <td>
-                        <span th:text="${e.enabled ? 'Active' : 'Disabled'}">Active</span>
+                        <span th:if="${e.enabled}" class="status-active">
+                            Active
+                        </span>
+
+                        <span th:unless="${e.enabled}" class="status-disabled">
+                            Disabled
+                        </span>
                     </td>
+
                     <td>
-                        <span th:each="r : ${e.roles}" class="badge bg-light text-dark me-1 mb-1" th:text="${r.name}">Role</span>
+                        <span th:each="r : ${e.roles}"
+                              class="badge-role me-1 mb-1"
+                              th:text="${r.name}">
+                            Role
+                        </span>
                     </td>
+
                     <td class="text-end">
-    <span th:if="${e.roles.?[name == 'YONETICI'].size() > 0}">
-        Protected
-    </span>
+
+                        <span th:if="${e.roles.?[name == 'YONETICI'].size() > 0}"
+                              class="text-muted fw-bold">
+                            Protected
+                        </span>
 
                         <span th:if="${e.roles.?[name == 'YONETICI'].size() == 0}">
-        <a th:href="@{/employee/showFormForUpdate(employeeId=${e.id})}"
-           class="btn btn-sm btn-outline-primary">Update</a>
 
-        <a th:href="@{/employee/delete(employeeId=${e.id})}"
-           class="btn btn-sm btn-outline-danger"
-           onclick="return confirm('Are you sure?')">Delete</a>
-    </span>
+                            <a th:href="@{/employee/showFormForUpdate(employeeId=${e.id})}"
+                               class="btn btn-sm btn-outline-primary rounded-3">
+                                Update
+                            </a>
+
+                            <a th:href="@{/employee/delete(employeeId=${e.id})}"
+                               class="btn btn-sm btn-outline-danger rounded-3"
+                               onclick="return confirm('Are you sure?')">
+                                Delete
+                            </a>
+
+                        </span>
+
                     </td>
+
                 </tr>
+
                 </tbody>
+
             </table>
+
         </div>
+
     </div>
-</div>
+
+</main>
+
+<script>
+
+    const menuBtn = document.getElementById('menuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    function toggleMenu() {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    }
+
+    menuBtn.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', toggleMenu);
+
+</script>
+
 </body>
 </html>
