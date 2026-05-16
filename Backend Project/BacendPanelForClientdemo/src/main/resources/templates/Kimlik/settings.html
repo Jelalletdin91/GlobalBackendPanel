@@ -1,16 +1,389 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Settings</title>
+    <title>Settings | Kimlik Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --sidebar-bg: #ffffff;
+            --body-bg: #f9fafb;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --card-border: rgba(229,231,235,.8);
+        }
+
+        body {
+            background: var(--body-bg);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--card-border);
+            height: 100vh;
+            position: fixed;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            z-index: 1050;
+            transition: transform .3s ease;
+        }
+
+        .profile-box {
+            margin: 24px 0;
+            padding: 14px;
+            border-radius: 16px;
+            background: rgba(99,102,241,.08);
+            border: 1px solid rgba(99,102,241,.12);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: .2s;
+        }
+
+        .profile-box:hover {
+            transform: translateY(-2px);
+            background: rgba(99,102,241,.12);
+        }
+
+        .profile-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #4f46e5, #2563eb);
+            color: white;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .profile-info {
+            min-width: 0;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 800;
+            color: #111827;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-role {
+            margin-top: 3px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .sidebar-section-title {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: #9ca3af;
+            margin: 22px 12px 10px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-section-title::after {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 1px;
+            background: rgba(229,231,235,.8);
+            margin-top: 8px;
+        }
+
+        .brand-logo {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-weight: 800;
+        }
+
+        .nav-link-pro {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            border-radius: 10px;
+            transition: .2s;
+            margin-bottom: 4px;
+        }
+
+        .nav-link-pro:hover,
+        .nav-link-pro.active {
+            background: rgba(99,102,241,.08);
+            color: var(--accent);
+        }
+
+        .main-wrapper {
+            margin-left: 280px;
+            padding: 40px 60px;
+        }
+
+        .mobile-top-bar {
+            display: none;
+            background: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--card-border);
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1100;
+        }
+
+        .pro-card {
+            background: white;
+            border: 1px solid var(--card-border);
+            border-radius: 22px;
+            padding: 28px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.03);
+        }
+
+        .btn-pro {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .btn-pro:hover {
+            background: var(--accent-hover);
+            color: white;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 11px 14px;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 .2rem rgba(99,102,241,.12);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.4);
+            z-index: 1040;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+                padding: 24px 20px;
+            }
+
+            .mobile-top-bar {
+                display: flex;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 15px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<h2>Settings</h2>
+<div class="overlay" id="overlay"></div>
 
-<p>Change password will be here.</p>
+<div class="mobile-top-bar">
+    <div class="d-flex align-items-center gap-2">
+        <div class="brand-logo" style="width:24px;height:24px;font-size:12px;">K</div>
+        <span class="fw-bold">Kimlik Pro</span>
+    </div>
 
-<a th:href="@{/}">Back to dashboard</a>
+    <button class="btn border-0 fs-4" id="menuBtn">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+</div>
+
+<aside class="sidebar" id="sidebar">
+
+    <a th:href="@{/profile}" class="profile-box">
+        <div class="profile-avatar" th:text="${companyFirstLetterOfName}">K</div>
+
+        <div class="profile-info">
+            <div class="profile-name" th:text="${companyName}">Company Name</div>
+            <div class="profile-role" th:text="${userRole}">Manager</div>
+        </div>
+    </a>
+
+    <div class="sidebar-section-title">MAIN</div>
+
+    <a th:href="@{/}" class="nav-link-pro">
+        <i class="fa-solid fa-chart-pie"></i> Dashboard
+    </a>
+
+    <div sec:authorize="hasAnyRole('KIMLIK', 'YONETICI', 'DEVELOPER')">
+        <a th:href="@{/kimlik/list}" class="nav-link-pro">
+            <i class="fa-solid fa-address-book"></i> Clients
+        </a>
+    </div>
+
+    <div sec:authorize="hasAnyRole('STUDENT_KIMLIK', 'YONETICI', 'DEVELOPER')">
+        <a th:href="@{/Student_kimlik/list}" class="nav-link-pro">
+            <i class="fa-solid fa-graduation-cap"></i> Students
+        </a>
+    </div>
+
+    <div sec:authorize="hasAnyRole('VORKER_KIMLIK', 'YONETICI', 'DEVELOPER')">
+        <a th:href="@{/VorkerKimlik/list}" class="nav-link-pro">
+            <i class="fa-solid fa-user-gear"></i> Workers
+        </a>
+    </div>
+
+    <div class="sidebar-section-title mt-4">MANAGEMENT</div>
+
+    <div sec:authorize="hasAnyRole('YONETICI','DEVELOPER')">
+        <a th:href="@{/employee/list}" class="nav-link-pro">
+            <i class="fa-solid fa-users-gear"></i> Employees
+        </a>
+    </div>
+
+    <a th:href="@{/settings}" class="nav-link-pro active">
+        <i class="fa-solid fa-gear"></i> Settings
+    </a>
+
+    <div class="mt-auto">
+        <form th:action="@{/logout}" method="post">
+            <button class="nav-link-pro bg-transparent border-0 w-100 text-start text-danger">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+            </button>
+        </form>
+    </div>
+
+</aside>
+
+<main class="main-wrapper">
+
+    <header class="d-flex justify-content-between align-items-end mb-4 header-content">
+        <div>
+            <h1 class="fw-bold m-0">Settings</h1>
+            <p class="text-muted small mb-0">Manage your account and password</p>
+        </div>
+    </header>
+
+    <div th:if="${errorMessage}" class="alert alert-danger rounded-4" th:text="${errorMessage}"></div>
+    <div th:if="${successMessage}" class="alert alert-success rounded-4" th:text="${successMessage}"></div>
+
+    <div class="row g-4">
+
+        <div class="col-12 col-lg-5">
+            <div class="pro-card h-100">
+                <div class="text-muted small fw-bold mb-1">ACCOUNT</div>
+                <h5 class="fw-bold mb-4">Account Information</h5>
+
+                <div class="mb-3">
+                    <div class="text-muted small">Name</div>
+                    <div class="fw-bold" th:text="${user.name}">User Name</div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="text-muted small">Username</div>
+                    <div class="fw-bold" th:text="${user.username}">username</div>
+                </div>
+
+                <div>
+                    <div class="text-muted small">Email</div>
+                    <div class="fw-bold" th:text="${user.email}">email@example.com</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-7">
+            <div class="pro-card">
+                <div class="text-muted small fw-bold mb-1">SECURITY</div>
+                <h5 class="fw-bold mb-4">Change Password</h5>
+
+                <form th:action="@{/settings/change-password}" method="post">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Current Password</label>
+                        <input type="password" name="currentPassword" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">New Password</label>
+                        <input type="password" name="newPassword" class="form-control" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Confirm New Password</label>
+                        <input type="password" name="confirmPassword" class="form-control" required>
+                    </div>
+
+                    <button type="submit" class="btn-pro">
+                        <i class="fa-solid fa-shield-halved me-1"></i>
+                        Update Password
+                    </button>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    const menuBtn = document.getElementById('menuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    function toggleMenu() {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    }
+
+    if (menuBtn) menuBtn.addEventListener('click', toggleMenu);
+    if (overlay) overlay.addEventListener('click', toggleMenu);
+</script>
 
 </body>
 </html>
