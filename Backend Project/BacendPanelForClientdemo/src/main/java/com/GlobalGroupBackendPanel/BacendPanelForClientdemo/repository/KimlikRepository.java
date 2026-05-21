@@ -4,6 +4,7 @@ import com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity.Kimlik;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface KimlikRepository extends JpaRepository<Kimlik, Long> {
@@ -29,4 +30,10 @@ public interface KimlikRepository extends JpaRepository<Kimlik, Long> {
             ORDER BY k.kimlikEndDate ASC
             """)
     List<Kimlik> searchByCompanyIdAndKeyword(Long companyId, String keyword);
+
+    long countByCompanyIdAndCreatedAtBetween(
+            Long companyId,
+            LocalDateTime start,
+            LocalDateTime end
+    );
 }

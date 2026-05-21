@@ -309,6 +309,22 @@
         </div>
     </header>
 
+    <div class="pro-card mt-4">
+        <div class="text-muted small fw-bold mb-1">LANGUAGE</div>
+        <h5 class="fw-bold mb-4">Choose Language</h5>
+
+        <form method="get" th:action="@{/settings}">
+            <select name="lang" class="form-control" onchange="this.form.submit()">
+                <option value="en">English</option>
+                <option value="ru">Русский</option>
+                <option value="tr">Türkçe</option>
+                <option value="tm">Türkmençe</option>
+            </select>
+        </form>
+    </div>
+<br>
+
+
     <div th:if="${errorMessage}" class="alert alert-danger rounded-4" th:text="${errorMessage}"></div>
     <div th:if="${successMessage}" class="alert alert-success rounded-4" th:text="${successMessage}"></div>
 

@@ -10,6 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+
 @Controller
 public class MainController {
 
@@ -41,6 +44,37 @@ public class MainController {
 
         Long companyId = companyContextService.getCurrentCompanyId();
         Company company = companyContextService.getCurrentCompany();
+
+        YearMonth currentMonth = YearMonth.now();
+
+        LocalDateTime monthStart = currentMonth.atDay(1).atStartOfDay();
+        LocalDateTime monthEnd = currentMonth.atEndOfMonth().atTime(23, 59, 59);
+
+        model.addAttribute("clientCount", kimlikRepository.countByCompanyId(companyId));
+
+        model.addAttribute("clientThisMonth",
+                kimlikRepository.countByCompanyIdAndCreatedAtBetween(
+                        companyId,
+                        monthStart,
+                        monthEnd
+                )
+        );
+
+        model.addAttribute("studentKimlikThisMonth",
+                studentRepository.countByCompanyIdAndCreatedAtBetween(
+                        companyId,
+                        monthStart,
+                        monthEnd
+                )
+        );
+
+        model.addAttribute("workerKimlikThisMonth",
+               vorkerRepository.countByCompanyIdAndCreatedAtBetween(
+                        companyId,
+                        monthStart,
+                        monthEnd
+                )
+        );
 
         model.addAttribute("companyName", company.getName());
         model.addAttribute("companyFirstLetterOfName", company.getName().charAt(0));

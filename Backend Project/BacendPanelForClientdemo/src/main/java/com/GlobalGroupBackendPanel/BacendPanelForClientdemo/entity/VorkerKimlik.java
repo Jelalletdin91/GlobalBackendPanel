@@ -3,6 +3,7 @@ package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Entity
@@ -44,6 +45,16 @@ public class VorkerKimlik {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -148,6 +159,14 @@ public class VorkerKimlik {
 
     public void setKimlikEndDate(LocalDate kimlikEndDate) {
         this.kimlikEndDate = kimlikEndDate;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public void setWorkplace(String workplace) {

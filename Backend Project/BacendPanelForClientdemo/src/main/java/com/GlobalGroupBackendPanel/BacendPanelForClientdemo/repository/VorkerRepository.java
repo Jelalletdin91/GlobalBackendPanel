@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface VorkerRepository extends JpaRepository<VorkerKimlik, Long> {
@@ -32,4 +33,10 @@ public interface VorkerRepository extends JpaRepository<VorkerKimlik, Long> {
             ORDER BY v.kimlikEndDate ASC
             """)
     List<VorkerKimlik> searchByCompanyIdAndKeyword(Long companyId, String keyword);
+
+    long countByCompanyIdAndCreatedAtBetween(
+            Long companyId,
+            LocalDateTime start,
+            LocalDateTime end
+    );
 }

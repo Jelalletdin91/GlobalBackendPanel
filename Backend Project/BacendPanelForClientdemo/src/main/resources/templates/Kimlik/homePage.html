@@ -214,6 +214,17 @@ background: rgba(99, 102, 241, 0,12);
             border: none;
         }
 
+        .stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: rgba(99,102,241,.08);
+    color: var(--accent);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+}
+
         /* RESPONSIVE FIXES */
         @media (max-width: 991px) {
             .sidebar {
@@ -336,23 +347,99 @@ background: rgba(99, 102, 241, 0,12);
     </header>
 
     <div class="row g-3 mb-4">
+
+        <!-- CLIENTS CARD -->
         <div class="col-12 col-md-4" sec:authorize="hasAnyRole('KIMLIK', 'YONETICI', 'DEVELOPER')">
-            <div class="pro-card" >
-                <div class="text-muted small fw-600">Total Clients</div>
-                <div class="fs-2 fw-800" th:text="${clientCount}">0</div>
+            <div class="pro-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-muted small fw-600">Clients</div>
+                        <div class="fs-2 fw-800" th:text="${clientCount}">0</div>
+                        <div class="text-success small fw-bold mt-1">
+                            +<span th:text="${clientThisMonth}">0</span> this month
+                        </div>
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-address-book"></i>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-12 col-md-4" sec:authorize="hasAnyRole('STUDENT_KIMLIK', 'YONETICI', 'DEVELOPER')">
+        <!-- STUDENTS CARD -->
+
+        <div class="col-12 col-md-4"
+             sec:authorize="hasAnyRole('STUDENT_KIMLIK', 'YONETICI', 'DEVELOPER')">
+
             <div class="pro-card">
-                <div class="text-muted small fw-600">Students</div>
-                <div class="fs-2 fw-800" th:text="${studentCount}">0</div>
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+
+                        <div class="text-muted small fw-600">
+                            Students
+                        </div>
+
+                        <div class="fs-2 fw-800"
+                             th:text="${studentCount}">
+                            0
+                        </div>
+
+                        <div class="text-success small fw-bold mt-1">
+                            +<span th:text="${studentKimlikThisMonth}">0</span>
+                            this month
+                        </div>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+
+                </div>
+
             </div>
+
         </div>
-        <div class="col-12 col-md-4" sec:authorize="hasAnyRole('VORKER_KIMLIK', 'YONETICI', 'DEVELOPER')">
+
+
+
+        <!-- WORKERS CARD -->
+
+        <div class="col-12 col-md-4"
+             sec:authorize="hasAnyRole('VORKER_KIMLIK', 'YONETICI', 'DEVELOPER')">
+
             <div class="pro-card">
-                <div class="text-muted small fw-600">Workers</div>
-                <div class="fs-2 fw-800" th:text="${workerCount}">0</div>
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+
+                        <div class="text-muted small fw-600">
+                            Workers
+                        </div>
+
+                        <div class="fs-2 fw-800"
+                             th:text="${workerCount}">
+                            0
+                        </div>
+
+                        <div class="text-success small fw-bold mt-1">
+                            +<span th:text="${workerKimlikThisMonth}">0</span>
+                            this month
+                        </div>
+
+                    </div>
+
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+
+                </div>
+
             </div>
+
         </div>
     </div>
 

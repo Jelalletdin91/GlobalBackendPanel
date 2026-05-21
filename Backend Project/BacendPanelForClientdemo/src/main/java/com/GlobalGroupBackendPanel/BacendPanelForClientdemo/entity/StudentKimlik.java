@@ -3,6 +3,7 @@ package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Entity
@@ -53,6 +54,16 @@ public class StudentKimlik {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -185,6 +196,14 @@ public class StudentKimlik {
 
     public void setUniversityStartDate(LocalDate universityStartDate) {
         this.universityStartDate = universityStartDate;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public void setUniversityEndDate(LocalDate universityEndDate) {

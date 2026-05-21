@@ -3,6 +3,7 @@ package com.GlobalGroupBackendPanel.BacendPanelForClientdemo.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Entity
@@ -38,6 +39,18 @@ public class Kimlik {
 
     @Column(name="notified_60_days", nullable = false)
     private boolean notified60Days;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
+
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
@@ -131,6 +144,14 @@ public class Kimlik {
 
     public void setKimlikEndDate(LocalDate kimlikEndDay) {
         this.kimlikEndDate = kimlikEndDay;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Company getCompany() {

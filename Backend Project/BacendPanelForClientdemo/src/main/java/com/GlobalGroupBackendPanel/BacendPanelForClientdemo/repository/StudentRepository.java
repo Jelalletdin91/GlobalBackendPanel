@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface StudentRepository extends JpaRepository<StudentKimlik, Long> {
@@ -32,4 +33,10 @@ public interface StudentRepository extends JpaRepository<StudentKimlik, Long> {
             ORDER BY s.kimlikEndDate ASC
             """)
     List<StudentKimlik> searchByCompanyIdAndKeyword(Long companyId, String keyword);
+
+    long countByCompanyIdAndCreatedAtBetween(
+            Long companyId,
+            LocalDateTime start,
+            LocalDateTime end
+    );
 }
